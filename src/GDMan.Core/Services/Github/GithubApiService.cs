@@ -1,20 +1,24 @@
+using GDMan.Core.Models.Github;
+
 namespace GDMan.Core.Services.Github;
 
-public class GithubApiService
+public class GithubApiService(WebApiService webApiService)
 {
-    private readonly WebApiService _webApiService;
+    private readonly WebApiService _webApiService = webApiService;
 
-    public GithubApiService()
+    public GithubApiService() : this(new(new HttpClient
     {
-        _webApiService = new(new HttpClient
-        {
-            BaseAddress = new("https://api.github.com")
-        });
-    }
+        BaseAddress = new("https://api.github.com")
+    }))
+    { }
 
-    public GithubApiService(WebApiService webApiService)
+    public async Task<IEnumerable<Release>> GetReleasesAsync(string owner, string repo)
     {
-        _webApiService = webApiService;
+        var result = await _webApiService.GetAsync<IEnumerable<Release>>("repos", $"{owner}/{repo}", "releases");
+
+        if (result.Status == Models.ResultStatus.OK) return result.Value!;
+
+        throw new Exception("Request failed, handle later");
     }
 
 

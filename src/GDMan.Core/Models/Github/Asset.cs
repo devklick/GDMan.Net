@@ -5,28 +5,28 @@ namespace GDMan.Core.Models.Github;
 public class Asset
 {
     [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public required string Url { get; set; }
 
     [JsonPropertyName("id")]
     public int Id { get; set; }
 
     [JsonPropertyName("node_id")]
-    public string NodeId { get; set; }
+    public required string NodeId { get; set; }
 
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     [JsonPropertyName("label")]
-    public string Label { get; set; }
+    public required string Label { get; set; }
 
     [JsonPropertyName("uploader")]
-    public User Uploader { get; set; }
+    public required User Uploader { get; set; }
 
     [JsonPropertyName("content_type")]
-    public string ContentType { get; set; }
+    public required string ContentType { get; set; }
 
     [JsonPropertyName("state")]
-    public string State { get; set; }
+    public required string State { get; set; }
 
     [JsonPropertyName("size")]
     public int Size { get; set; }
@@ -41,5 +41,5 @@ public class Asset
     public DateTime UpdatedAt { get; set; }
 
     [JsonPropertyName("browser_download_url")]
-    public string BrowserDownloadUrl { get; set; }
+    public required string BrowserDownloadUrl { get; set; }
 }

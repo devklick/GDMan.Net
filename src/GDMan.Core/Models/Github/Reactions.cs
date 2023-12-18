@@ -5,7 +5,7 @@ namespace GDMan.Core.Models.Github;
 public class Reactions
 {
     [JsonPropertyName("url")]
-    public string Url { get; set; }
+    public required string Url { get; set; }
 
     [JsonPropertyName("total_count")]
     public int TotalCount { get; set; }

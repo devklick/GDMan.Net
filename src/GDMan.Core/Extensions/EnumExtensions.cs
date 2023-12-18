@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace GDMan.Core.Extensions;
 
@@ -31,18 +32,18 @@ public static class EnumExtensions
     /// <param name="value"></param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(this Enum value) where TAttribute : Attribute
+        => value.GetAttributes<TAttribute>().SingleOrDefault();
+
+    public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Enum value) where TAttribute : Attribute
     {
-        if (value == null)
-        {
-            return null;
-        }
+        if (value == null) return [];
 
         var type = value.GetType();
-        if (type == null) return null;
+        if (type == null) return [];
 
         var name = Enum.GetName(type, value);
-        if (name == null) return null;
+        if (name == null) return [];
 
-        return type.GetField(name)?.GetCustomAttributes(false).OfType<TAttribute>().SingleOrDefault();
+        return type.GetField(name)?.GetCustomAttributes(false).OfType<TAttribute>() ?? [];
     }
 }
