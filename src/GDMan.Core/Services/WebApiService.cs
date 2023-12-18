@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+
 using GDMan.Core.Extensions;
 using GDMan.Core.Models;
 
@@ -27,8 +28,8 @@ public class WebApiService(HttpClient client)
         var result = new Result<T>();
         try
         {
-            Uri uri = BuildUri(baseUrl, controller, action, queryParameters, trimTrailingSlash);
-            var httpResponse = await _client.GetAsync(uri);
+            var endpoint = BuildEndpointUrl(baseUrl, controller, action, queryParameters, trimTrailingSlash);
+            var httpResponse = await _client.GetAsync(endpoint);
             result = await ProcessResponse<T>(httpResponse);
         }
         catch (Exception ex)
@@ -47,7 +48,7 @@ public class WebApiService(HttpClient client)
     /// <param name="parameters">The URL query parameter string of URL encoded keys and values</param>
     /// <param name="trimTrailingSlash">Indicates whether or not any trailing forward slashes should be trimmed from the URL before sending the request</param>
     /// <returns><see cref="Uri"/>object for with the given values</returns>
-    private static Uri BuildUri(string baseUrl, string? controller, string? action, string? parameters = null, bool trimTrailingSlash = true)
+    private static string BuildEndpointUrl(string baseUrl, string? controller, string? action, string? parameters = null, bool trimTrailingSlash = true)
     {
         string url = baseUrl.EnsureTrailingChar('/');
 
@@ -60,7 +61,7 @@ public class WebApiService(HttpClient client)
             url = url.TrimEnd('/');
         }
 
-        return new Uri(url);
+        return url;
     }
 
     /// <summary>

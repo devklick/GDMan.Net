@@ -40,7 +40,7 @@ public class CliArgs
                 return;
             }
 
-            var validation = attr.Validate(argProp, attr, value);
+            var validation = attr.Validate(argProp, value);
 
             if (!validation.Valid)
             {

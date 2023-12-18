@@ -2,18 +2,22 @@
 using System.Text.Json;
 
 using GDMan.Cli.Args;
+using GDMan.Core.Services;
+using GDMan.Core.Services.Github;
 
 namespace GDMan.Cli;
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         var cliArgs = new CliArgs(args);
 
         HandleArgs(cliArgs);
 
-        Console.WriteLine(JsonSerializer.Serialize(cliArgs.Values));
+        var godot = new GodotService(new GithubApiService(), new FileSystemService());
+
+        await godot.FindDownloadAssetAsync("", true, Core.Models.Platform.Linux, Core.Models.Architecture.Arm32, Core.Models.Flavour.Mono);
     }
 
     private static void HandleArgs(CliArgs cliArgs)

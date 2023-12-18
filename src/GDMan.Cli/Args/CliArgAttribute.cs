@@ -2,6 +2,7 @@ using System.Reflection;
 
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
+using GDMan.Core.Models;
 
 namespace GDMan.Cli.Args;
 
@@ -11,34 +12,44 @@ public class CliArgAttribute : Attribute
     public string FullName { get; }
     public string ShortName { get; }
     public bool IsFlag { get; }
+    public CliArgDataType Type { get; }
 
-    public CliArgAttribute(string fullName, string shortName, bool isFlag = false)
+    public CliArgAttribute(string fullName, string shortName, CliArgDataType type, bool isFlag = false)
     {
         FullName = fullName;
         ShortName = shortName;
+        Type = type;
         IsFlag = isFlag;
+
+        if (IsFlag && Type != CliArgDataType.Boolean)
+            throw new InvalidOperationException("CLI args which are flags must be of boolean type");
 
         if (!FullName.StartsWith("--")) FullName = $"--{FullName}";
         if (!ShortName.StartsWith('-')) ShortName = $"-{ShortName}";
     }
 
-    public virtual CliArgValidation Validate(PropertyInfo propertyInfo, CliArgAttribute attr, object? value)
+    public virtual CliArgValidation Validate(PropertyInfo propertyInfo, object? value) => Type switch
     {
-        var type = propertyInfo.PropertyType;
-        if (type == typeof(bool)) return ValidateBoolean(propertyInfo, attr, value);
-        if (type.IsEnum) return ValidateEnum(propertyInfo, value);
-        if (type == typeof(string)) return ValidateString(propertyInfo, value);
-        throw new NotImplementedException($"Unsupported type ${type} for CliArgAttribute");
-    }
+        CliArgDataType.String => ValidateString(propertyInfo, value),
+        CliArgDataType.Boolean => ValidateBoolean(propertyInfo, value),
+        CliArgDataType.Enum => ValidateEnum(propertyInfo, value),
+        _ => throw new NotImplementedException($"Unsupported type ${Type} for CliArgAttribute")
+    };
 
     private static CliArgValidation ValidateString(PropertyInfo propertyInfo, object? value)
     {
+        if (propertyInfo.PropertyType == typeof(SemVer))
+        {
+            return SemVer.TryParse(value?.ToString(), out var semVer)
+                ? CliArgValidation.Success(semVer)
+                : CliArgValidation.Failed();
+        }
         return CliArgValidation.Success(value?.ToString() ?? "");
     }
 
-    private static CliArgValidation ValidateBoolean(PropertyInfo _, CliArgAttribute attr, object? value)
+    private CliArgValidation ValidateBoolean(PropertyInfo _, object? value)
     {
-        if (attr.IsFlag) return CliArgValidation.Success(true);
+        if (IsFlag) return CliArgValidation.Success(true);
 
         if (!bool.TryParse((string)value!, out var boolValue))
         {

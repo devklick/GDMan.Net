@@ -59,5 +59,5 @@ public class Release
     public required string Body { get; set; }
 
     [JsonPropertyName("reactions")]
-    public required Reactions Reactions { get; set; }
+    public Reactions? Reactions { get; set; }
 }
