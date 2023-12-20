@@ -12,7 +12,7 @@ public class GodotService(GithubApiService github, FileSystemService fileSystemS
         string version, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {
-        await _gh.FindReleaseWithAsset("godotengine", "godot", "4.2.1", ["linux.arm32"], true);
+        await _gh.FindReleaseWithAsset("godotengine", "godot", SemVer.Parse("1.2.3"), ["linux.arm32"], true);
 
         throw new Exception();
     }

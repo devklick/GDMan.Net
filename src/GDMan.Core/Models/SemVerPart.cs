@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
+
 namespace GDMan.Core.Models;
 
 public enum SemVerValueType
@@ -14,25 +17,22 @@ public enum SemVerPartType
     Suffix
 }
 
-public class SemVerPart
+public partial class SemVerPart
 {
+    [GeneratedRegex("^[0-9A-Za-z-]*$")]
+    private static partial Regex SuffixRegex();
+
     public SemVerPartType Type { get; }
     public SemVerValueType ValueType { get; }
     public string StringValue { get; }
     public int? NumericValue { get; }
-
-    public bool IsMatch(SemVerPart other)
-        => Type == other.Type
-            && (ValueType == SemVerValueType.Wildcard
-            || other.ValueType == SemVerValueType.Wildcard
-            || StringValue == other.StringValue);
 
     public SemVerPart(SemVerPartType type, string value)
     {
         Type = type;
         StringValue = value;
 
-        if (int.TryParse(value, out var n))
+        if (int.TryParse(value, out var n) && n >= 0)
         {
             NumericValue = n;
             ValueType = SemVerValueType.Absolute;
@@ -41,9 +41,23 @@ public class SemVerPart
         {
             ValueType = SemVerValueType.Wildcard;
         }
-        else throw new FormatException($"Invalid {type} version part");
+        else if (Type == SemVerPartType.Suffix)
+        {
+            ValueType = SemVerValueType.Absolute;
 
-        if (Type == SemVerPartType.Major && !NumericValue.HasValue)
-            throw new FormatException("Cannot use wildcard for Major version part");
+            if (!SuffixRegex().IsMatch(value) || string.IsNullOrWhiteSpace(value))
+                ThrowInvalidFormat(type);
+        }
+        else ThrowInvalidFormat(type);
     }
+
+    [DoesNotReturn]
+    private void ThrowInvalidFormat(SemVerPartType type)
+        => throw new FormatException($"Invalid {type} version part");
+
+    public bool IsMatch(SemVerPart other)
+        => Type == other.Type
+            && (ValueType == SemVerValueType.Wildcard
+            || other.ValueType == SemVerValueType.Wildcard
+            || StringValue == other.StringValue);
 }

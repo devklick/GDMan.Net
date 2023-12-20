@@ -8,7 +8,7 @@ public partial class SemVer(SemVerPart major, SemVerPart minor, SemVerPart patch
     public SemVerPart Major { get; } = major;
     public SemVerPart Minor { get; } = minor;
     public SemVerPart Patch { get; } = patch;
-    public SemVerPart Suffix { get; set; } = suffix;
+    public SemVerPart Suffix { get; } = suffix;
 
     public static SemVer Parse(string? version)
     {
@@ -77,12 +77,5 @@ public partial class SemVer(SemVerPart major, SemVerPart minor, SemVerPart patch
     }
 
     private static SemVerPart ParseSuffix(string? suffix)
-        => string.IsNullOrEmpty(suffix)
-            ? new SemVerPart(SemVerPartType.Suffix, "*")
-            : SuffixRegex().IsMatch(suffix)
-                ? new SemVerPart(SemVerPartType.Suffix, suffix)
-                : throw new FormatException("Invalid version suffix");
-
-    [GeneratedRegex("[0-9A-Za-z-]*")]
-    private static partial Regex SuffixRegex();
+        => new(SemVerPartType.Suffix, suffix ?? "*");
 }
