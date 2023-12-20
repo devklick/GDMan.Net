@@ -2,6 +2,8 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
+using Semver;
+
 namespace GDMan.Cli.Args;
 
 public class CliArgs
@@ -98,7 +100,16 @@ public class CliArgs
         {
             return GetStringTypeInfo(argProp);
         }
+        if (argProp.PropertyType == typeof(SemVersionRange))
+        {
+            return GetSemVersionTypeInfo(argProp);
+        }
         throw new NotImplementedException($"Unsupported type ${argProp.PropertyType} for CliArgAttribute");
+    }
+
+    private static CliArgTypeDefinition GetSemVersionTypeInfo(PropertyInfo argProp)
+    {
+        return new CliArgTypeDefinition("String", "Valid sematic version range");
     }
 
     private static CliArgTypeDefinition GetBoolTypeInfo(PropertyInfo argProp, CliArgAttribute attr)

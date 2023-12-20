@@ -13,14 +13,10 @@ class Program
     {
         var cliArgs = new CliArgs(args);
 
-        HandleArgs(cliArgs);
-
-        var godot = new GodotService(new GithubApiService(), new FileSystemService());
-
-        await godot.FindDownloadAssetAsync("", true, Core.Models.Platform.Linux, Core.Models.Architecture.Arm32, Core.Models.Flavour.Mono);
+        await HandleArgs(cliArgs);
     }
 
-    private static void HandleArgs(CliArgs cliArgs)
+    private static async Task HandleArgs(CliArgs cliArgs)
     {
         if (cliArgs.RequiresHelp)
         {
@@ -30,6 +26,21 @@ class Program
         {
             HandleError(cliArgs);
         }
+
+        await RunAsync(cliArgs);
+    }
+
+    private static async Task RunAsync(CliArgs cliArgs)
+    {
+        var godot = new GodotService(new GithubApiService(), new FileSystemService());
+
+        await godot.FindDownloadAssetAsync(
+            cliArgs.Values.Version,
+            cliArgs.Values.Latest,
+            cliArgs.Values.Platform,
+            cliArgs.Values.Architecture,
+            cliArgs.Values.Flavour
+        );
     }
 
     [DoesNotReturn]

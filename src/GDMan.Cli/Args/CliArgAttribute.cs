@@ -4,6 +4,8 @@ using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 using GDMan.Core.Models;
 
+using Semver;
+
 namespace GDMan.Cli.Args;
 
 [AttributeUsage(AttributeTargets.Property)]
@@ -38,9 +40,9 @@ public class CliArgAttribute : Attribute
 
     private static CliArgValidation ValidateString(PropertyInfo propertyInfo, object? value)
     {
-        if (propertyInfo.PropertyType == typeof(SemVer))
+        if (propertyInfo.PropertyType == typeof(SemVersionRange))
         {
-            return SemVer.TryParse(value?.ToString(), out var semVer)
+            return SemVersionRange.TryParse(value?.ToString(), out var semVer)
                 ? CliArgValidation.Success(semVer)
                 : CliArgValidation.Failed();
         }

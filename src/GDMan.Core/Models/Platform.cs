@@ -1,15 +1,28 @@
-using GDMan.Core.Attributes;
+using System.Runtime.InteropServices;
 
 namespace GDMan.Core.Models;
 
-public enum Platform
+public class Platform : IEquatable<Platform>
 {
-    [Alias("windows", "win", "w")]
-    Windows,
+    public static readonly Platform Linux = new("Linux", "linux", "lin", "l");
+    public static readonly Platform Windows = new("Windows", "windows", "win", "w");
+    public static readonly Platform MacOS = new("MacOS", "macos", "mac", "m");
 
-    [Alias("macos", "mac", "m")]
-    MacOS,
+    public string Identifier { get; }
+    public IReadOnlyCollection<string> Aliases { get; }
 
-    [Alias("linux", "lin", "l")]
-    Linux
+    private Platform(string identifier, params string[] aliases)
+    {
+        Identifier = identifier;
+        Aliases = aliases;
+    }
+
+    public static Platform FromSystem() =>
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Windows
+            : RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? Linux
+            : RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? MacOS
+            : throw new Exception("Unsupported operating system");
+
+    public bool Equals(Platform? other)
+        => other != null && other.Identifier == Identifier;
 }
