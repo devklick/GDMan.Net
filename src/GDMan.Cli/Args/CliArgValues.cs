@@ -1,11 +1,11 @@
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 
-using ArchitectureType = GDMan.Core.Models.Architecture;
+using Semver;
 
 using GDMan.Core.Models;
-using Semver;
 using GDMan.Core.Services;
+
+
 
 namespace GDMan.Cli.Args;
 
@@ -27,7 +27,7 @@ public class CliArgValues
 
     [CliArg("architecture", "a", CliArgDataType.Enum)]
     [Description("The system architecture to find a version for")]
-    public required ArchitectureType Architecture { get; set; }
+    public required Architecture Architecture { get; set; }
 
     [CliArg("flavour", "f", CliArgDataType.Enum)]
     [Description("The \"flavour\" (for lack of a better name) of version to use")]
@@ -48,11 +48,26 @@ public class CliArgValues
     };
 
     private static Platform GetCurrentPlatform()
-        => Platform.FromSystem();
+        => PlatformHelper.FromEnvVar() ?? PlatformHelper.FromSystem();
 
-    private static ArchitectureType GetCurrentArchitecture()
-        => ArchitectureType.FromEnvVar() ?? ArchitectureType.FromSystem();
+    private static Architecture GetCurrentArchitecture()
+        => ArchitectureHelper.FromEnvVar() ?? ArchitectureHelper.FromSystem();
 
     private static string GetGodotInstallDirectory()
         => FileSystemService.GDManDirectory;
+
+    public CliArgValidation Validate()
+    {
+        if (Version == null && !Latest)
+        {
+            return CliArgValidation.Failed("Either --version or --latest must be provided");
+        }
+
+        if (Platform == Platform.Windows && (Architecture == Architecture.Arm32 || Architecture == Architecture.Arm64))
+        {
+            return CliArgValidation.Failed($"Architecture {Architecture} not supported on Windows platform");
+        }
+
+        return CliArgValidation.Success();
+    }
 }

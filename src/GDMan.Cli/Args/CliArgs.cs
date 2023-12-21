@@ -1,6 +1,7 @@
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+
+using GDMan.Core.Models.Interfaces;
 
 using Semver;
 
@@ -42,17 +43,24 @@ public class CliArgs
                 return;
             }
 
-            var validation = attr.Validate(argProp, value);
+            var argValidation = attr.Validate(argProp, value);
 
-            if (!validation.Valid)
+            if (!argValidation.Valid)
             {
                 Errors.Add($"Invalid value for argument {name}: {value}");
                 return;
             }
 
-            argProp.SetValue(Values, validation.Value);
+            argProp.SetValue(Values, argValidation.Value);
 
             i += attr.IsFlag ? 1 : 2;
+        }
+
+        var objectValidation = Values.Validate();
+
+        if (!objectValidation.Valid)
+        {
+            Errors.AddRange(objectValidation.Messages);
         }
     }
 
@@ -88,6 +96,10 @@ public class CliArgs
 
     private static CliArgTypeDefinition GetTypeInfo(PropertyInfo argProp, CliArgAttribute attr)
     {
+        if (argProp.PropertyType == typeof(SemVersionRange))
+        {
+            return GetSemVersionTypeInfo(argProp);
+        }
         if (argProp.PropertyType.IsEnum)
         {
             return GetEnumTypeInfo(argProp);
@@ -100,10 +112,7 @@ public class CliArgs
         {
             return GetStringTypeInfo(argProp);
         }
-        if (argProp.PropertyType == typeof(SemVersionRange))
-        {
-            return GetSemVersionTypeInfo(argProp);
-        }
+
         throw new NotImplementedException($"Unsupported type ${argProp.PropertyType} for CliArgAttribute");
     }
 
