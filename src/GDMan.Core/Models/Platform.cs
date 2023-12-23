@@ -10,6 +10,6 @@ public enum Platform
     [Alias("lin", "l")]
     Linux,
 
-    [Alias("mac", "m")]
+    [Alias("mac", "osx", "m")]
     MacOS
 }

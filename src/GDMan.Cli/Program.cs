@@ -33,8 +33,7 @@ class Program
     private static async Task RunAsync(CliArgs cliArgs)
     {
         var godot = new GodotService(
-            new GithubApiService(),
-            new FileSystemService(new HttpClient())
+            new GithubApiService()
         );
 
         var result = await godot.ProcessAsync(

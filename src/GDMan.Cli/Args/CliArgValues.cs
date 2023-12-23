@@ -4,8 +4,7 @@ using Semver;
 
 using GDMan.Core.Models;
 using GDMan.Core.Services;
-
-
+using GDMan.Core.Helpers;
 
 namespace GDMan.Cli.Args;
 
@@ -43,7 +42,7 @@ public class CliArgValues
         Latest = false,
         Platform = GetCurrentPlatform(),
         Architecture = GetCurrentArchitecture(),
-        Flavour = Flavour.Standard,
+        Flavour = GetFlavour(),
         Directory = GetGodotInstallDirectory()
     };
 
@@ -54,7 +53,10 @@ public class CliArgValues
         => ArchitectureHelper.FromEnvVar() ?? ArchitectureHelper.FromSystem();
 
     private static string GetGodotInstallDirectory()
-        => FileSystemService.GDManDirectory;
+        => FS.GodotVersionsDir.Path;
+
+    private static Flavour GetFlavour()
+        => FlavourHelper.FromEnvVar() ?? Flavour.Standard;
 
     public CliArgValidation Validate()
     {
@@ -66,6 +68,11 @@ public class CliArgValues
         if (Platform == Platform.Windows && (Architecture == Architecture.Arm32 || Architecture == Architecture.Arm64))
         {
             return CliArgValidation.Failed($"Architecture {Architecture} not supported on Windows platform");
+        }
+
+        if (Platform == Platform.Linux && (Version?.Any(v => v.Start.Major < 4) ?? false))
+        {
+            return CliArgValidation.Failed("GDMan does not support Godot version < 4 on Linux");
         }
 
         return CliArgValidation.Success();

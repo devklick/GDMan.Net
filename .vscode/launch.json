@@ -15,7 +15,11 @@
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",
       "stopAtEntry": false,
-      "args": ["--latest"]
+      // prettier-ignore
+      "args": [
+        "--latest", 
+        "--flavour", "mono"
+      ]
     },
     {
       "name": ".NET Core Attach",

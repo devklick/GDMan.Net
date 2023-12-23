@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Reflection;
 
+using GDMan.Core.Attributes;
+using GDMan.Core.Extensions;
 using GDMan.Core.Models.Interfaces;
 
 using Semver;
@@ -131,13 +133,13 @@ public class CliArgs
 
     private static CliArgTypeDefinition GetEnumTypeInfo(PropertyInfo argProp)
     {
-        var names = new List<string>();
         var allowedValues = Enum.GetValues(argProp.PropertyType).Cast<Enum>().Select(e =>
         {
             var name = e.ToString();
-            names.Add(name);
             var members = argProp.PropertyType.GetMember(name);
             var description = GetDescription(members.First());
+            var aliases = e.GetAttribute<AliasAttribute>()?.Aliases ?? [];
+            if (aliases.Any()) name += $", {string.Join(", ", aliases)}";
             return (name, description ?? "");
         }).ToList();
         return new("Enum", "", allowedValues);
