@@ -17,7 +17,7 @@ public class GodotService(GithubApiService github)
         Architecture architecture, Flavour flavour)
     {
         string versionName;
-        GodotVersionDirectory versionDir;
+        GodotVersionDirectory? versionDir;
 
 
         // -------------------------------------------------
@@ -28,7 +28,7 @@ public class GodotService(GithubApiService github)
         {
             versionName = FS.GenerateVersionName(version, platform, architecture, flavour);
 
-            if (FS.GodotVersionsDir.Exists(versionName, out versionDir))
+            if (FS.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
             {
                 FS.SetActive(versionDir);
                 return new Result<object>(ResultStatus.OK, null);
@@ -64,7 +64,7 @@ public class GodotService(GithubApiService github)
 
         versionName = FS.GenerateVersionName(version, platform, architecture, flavour);
 
-        if (FS.GodotVersionsDir.Exists(versionName, out versionDir))
+        if (FS.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
         {
             FS.SetActive(versionDir);
             return new Result<object>(ResultStatus.OK, null);
@@ -85,7 +85,7 @@ public class GodotService(GithubApiService github)
         return new Result<object>();
     }
 
-    public async Task<Result<Release>> FindDownloadAssetAsync(
+    private async Task<Result<Release>> FindDownloadAssetAsync(
         SemVersionRange? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {
@@ -98,7 +98,8 @@ public class GodotService(GithubApiService github)
         if (release.Status != ResultStatus.OK)
         {
             throw new Exception("Unable to search github for Godot releases. "
-            + "Make sure you can access https://github.com/godotengine/godot/releases/");
+            + "Make sure you can access https://github.com/godotengine/godot/releases/"
+            + Environment.NewLine + string.Join(Environment.NewLine, release.Messages));
         }
 
         return release;

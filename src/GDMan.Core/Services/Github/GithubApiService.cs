@@ -26,7 +26,24 @@ public class GithubApiService(WebApiService webApiService)
     { }
 
     public async Task<Result<IEnumerable<Release>>> GetReleasesAsync(string owner, string repo)
-        => await _api.GetAsync<IEnumerable<Release>>("repos", $"{owner}/{repo}", "releases");
+    {
+        var result = await _api.GetAsync(
+            GithubJsonContext.Default.IEnumerableRelease,
+            GithubJsonContext.Default.Error,
+            "repos",
+            $"{owner}/{repo}",
+            "releases");
+
+        if (result.Error != null)
+            result.Messages.Add(result.Error.Message);
+
+        return new Result<IEnumerable<Release>>
+        {
+            Messages = result.Messages,
+            Status = result.Status,
+            Value = result.Value
+        };
+    }
 
     public async Task<Result<Release>> FindReleaseWithAsset(string owner, string repo, SemVersionRange? versionRange, IEnumerable<string> assetNameLike, bool latest)
     {

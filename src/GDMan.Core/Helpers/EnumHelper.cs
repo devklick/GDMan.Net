@@ -17,7 +17,7 @@ public class EnumHelper
                 return true;
             }
 
-            var aliases = ((Enum)e).GetAttribute<AliasAttribute>()?.Aliases ?? [];
+            var aliases = e.GetAttribute<AliasAttribute>()?.Aliases ?? [];
 
             if (aliases.Any(alias => alias == e.ToString()))
             {

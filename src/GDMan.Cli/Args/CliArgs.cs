@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using GDMan.Core.Attributes;
@@ -130,6 +131,8 @@ public class CliArgs
         return new("String", "Anything");
     }
 
+    [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2075",
+        Justification = "Unable to fix properly and seems to work as-is, so suppressing error")]
     private static CliArgTypeDefinition GetEnumTypeInfo(PropertyInfo argProp)
     {
         var allowedValues = Enum.GetValues(argProp.PropertyType).Cast<Enum>().Select(e =>
@@ -143,7 +146,6 @@ public class CliArgs
         }).ToList();
         return new("Enum", "", allowedValues);
     }
-
     private static IEnumerable<(PropertyInfo argProp, CliArgAttribute attr)> GetArgProps()
     {
         var flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty;

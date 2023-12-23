@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace GDMan.Core.Extensions;
@@ -31,10 +32,10 @@ public static class EnumExtensions
     /// <typeparam name="TAttribute"></typeparam>
     /// <param name="value"></param>
     /// <returns></returns>
-    public static TAttribute? GetAttribute<TAttribute>(this Enum value) where TAttribute : Attribute
+    public static TAttribute? GetAttribute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicFields)] TAttribute>(this Enum value) where TAttribute : Attribute
         => value.GetAttributes<TAttribute>().SingleOrDefault();
 
-    public static IEnumerable<TAttribute> GetAttributes<TAttribute>(this Enum value) where TAttribute : Attribute
+    public static IEnumerable<TAttribute> GetAttributes<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicFields)] TAttribute>(this Enum value) where TAttribute : Attribute
     {
         if (value == null) return [];
 
@@ -44,6 +45,11 @@ public static class EnumExtensions
         var name = Enum.GetName(type, value);
         if (name == null) return [];
 
+        return GetAttributes<TAttribute>(type, name);
+    }
+
+    private static IEnumerable<TAttribute> GetAttributes<TAttribute>([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields | DynamicallyAccessedMemberTypes.PublicMethods)] Type type, string name)
+    {
         return type.GetField(name)?.GetCustomAttributes(false).OfType<TAttribute>() ?? [];
     }
 }

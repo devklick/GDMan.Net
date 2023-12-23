@@ -28,7 +28,7 @@ public class GDManVersionsDirectory(string gdmanDir, HttpClient? client = null)
         return dir;
     }
 
-    public bool Exists(string versionName, [NotNullWhen(true)] out GodotVersionDirectory? directory)
+    public bool AlreadyInstalled(string versionName, [NotNullWhen(true)] out GodotVersionDirectory? directory)
     {
         var path = System.IO.Path.Join(Path, versionName);
 
