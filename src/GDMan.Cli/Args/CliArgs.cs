@@ -3,7 +3,6 @@ using System.Reflection;
 
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
-using GDMan.Core.Models.Interfaces;
 
 using Semver;
 
