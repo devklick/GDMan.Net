@@ -33,7 +33,7 @@ public class CliArgValues
     public Flavour Flavour { get; set; }
 
     [CliArg("directory", "d", CliArgDataType.String)]
-    [Description("The directory the downloaded version should be installed")]
+    [Description("The directory where the downloaded version should be installed")]
     public string? Directory { get; set; }
 
     public static CliArgValues Default => new()
@@ -43,7 +43,7 @@ public class CliArgValues
         Platform = GetCurrentPlatform(),
         Architecture = GetCurrentArchitecture(),
         Flavour = GetFlavour(),
-        Directory = GetGodotInstallDirectory()
+        Directory = GetGodotVersionsDirectory()
     };
 
     private static Platform GetCurrentPlatform()
@@ -52,7 +52,7 @@ public class CliArgValues
     private static Architecture GetCurrentArchitecture()
         => ArchitectureHelper.FromEnvVar() ?? ArchitectureHelper.FromSystem();
 
-    private static string GetGodotInstallDirectory()
+    private static string GetGodotVersionsDirectory()
         => FS.GodotVersionsDir.Path;
 
     private static Flavour GetFlavour()
