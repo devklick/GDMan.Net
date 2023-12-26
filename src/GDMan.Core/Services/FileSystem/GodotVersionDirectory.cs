@@ -32,13 +32,17 @@ public class GodotVersionDirectory
             Overwrite = true,
         };
 
-        using Stream stream = File.OpenRead(ZipPath);
-        using var reader = ReaderFactory.Open(stream);
-        while (reader.MoveToNextEntry())
+        using (Stream stream = File.OpenRead(ZipPath))
         {
-            if (reader.Entry.IsDirectory) continue;
+            using (var reader = ReaderFactory.Open(stream))
+            {
+                while (reader.MoveToNextEntry())
+                {
+                    if (reader.Entry.IsDirectory) continue;
 
-            reader.WriteEntryToDirectory(Path, options);
+                    reader.WriteEntryToDirectory(Path, options);
+                }
+            }
         }
 
         // Delete the zip
