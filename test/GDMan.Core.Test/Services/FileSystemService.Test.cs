@@ -1,7 +1,7 @@
 using FluentAssertions;
 
 using GDMan.Core.Models;
-using GDMan.Core.Services;
+using GDMan.Core.Services.FileSystem;
 
 using Semver;
 

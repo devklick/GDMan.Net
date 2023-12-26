@@ -3,9 +3,8 @@ using System.Text;
 using Semver;
 
 using GDMan.Core.Models;
-using GDMan.Core.Services.FileSystem;
 
-namespace GDMan.Core.Services;
+namespace GDMan.Core.Services.FileSystem;
 
 public class FS
 {

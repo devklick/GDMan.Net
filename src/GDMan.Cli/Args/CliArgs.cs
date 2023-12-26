@@ -37,13 +37,13 @@ public class CliArgs
             var name = args[i];
             var (argProp, attr) = argProps.FirstOrDefault(a => a.attr.FullName == name || a.attr.ShortName == name);
 
-            var value = attr.IsFlag ? null : args.Length >= i + 2 ? args[i + 1] : null;
-
             if (attr == null)
             {
                 Errors.Add($"Unknown argument: {name}");
                 return;
             }
+
+            var value = attr.IsFlag ? null : args.Length >= i + 2 ? args[i + 1] : null;
 
             var argValidation = attr.Validate(argProp, value);
 

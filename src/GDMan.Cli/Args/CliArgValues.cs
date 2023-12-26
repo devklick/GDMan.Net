@@ -5,6 +5,7 @@ using Semver;
 using GDMan.Core.Models;
 using GDMan.Core.Services;
 using GDMan.Core.Helpers;
+using GDMan.Core.Services.FileSystem;
 
 namespace GDMan.Cli.Args;
 

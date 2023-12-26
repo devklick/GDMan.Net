@@ -10,15 +10,17 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/GDMan.Cli/bin/Debug/net8.0/GDMan.Cli.dll",
+      "program": "${workspaceFolder}/src/GDMan.Cli/bin/Debug/net8.0/linux-x64/GDMan.Cli.dll",
       "cwd": "${workspaceFolder}/src/GDMan.Cli",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",
       "stopAtEntry": false,
       // prettier-ignore
       "args": [
-        "--latest", 
-        "--flavour", "mono"
+        " --", 
+        "help"
+        // "--latest", 
+        // "--flavour", "mono"
       ]
     },
     {

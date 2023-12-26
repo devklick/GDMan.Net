@@ -35,6 +35,7 @@ public static class EnumExtensions
     public static TAttribute? GetAttribute<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicFields)] TAttribute>(this Enum value) where TAttribute : Attribute
         => value.GetAttributes<TAttribute>().SingleOrDefault();
 
+    [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2072", Justification = "Cant fix error, seems to work OK for now")]
     public static IEnumerable<TAttribute> GetAttributes<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods | DynamicallyAccessedMemberTypes.PublicFields)] TAttribute>(this Enum value) where TAttribute : Attribute
     {
         if (value == null) return [];
