@@ -2,11 +2,9 @@ using System.Text;
 
 namespace GDMan.Cli.Args;
 
-public class CliHelpInfo
+public class CommandHelpInfo : CliHelpInfo
 {
-    public static readonly string FullName = "--help";
-    public static readonly string ShortName = "-h";
-    public List<CliArgHelpInfo> ArgsInfo =
+    public List<CliArgHelpInfo> ArgsInfo { get; } =
     [
         new CliArgHelpInfo(FullName, ShortName, "Shows this help information")
     ];
