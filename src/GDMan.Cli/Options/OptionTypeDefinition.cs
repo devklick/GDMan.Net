@@ -1,6 +1,6 @@
-namespace GDMan.Cli.Args;
+namespace GDMan.Cli.Options;
 
-public class CliArgTypeDefinition(string type, string validation, List<(string name, string description)>? allowedValues = null)
+public class OptionTypeDefinition(string type, string validation, List<(string name, string description)>? allowedValues = null)
 {
     public string Type { get; set; } = type;
     public string Validation { get; set; } = validation;

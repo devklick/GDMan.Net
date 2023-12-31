@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 
-using GDMan.Cli.Args;
 using GDMan.Cli.Attributes;
 using GDMan.Core.Helpers;
 using GDMan.Core.Models;
@@ -34,23 +33,23 @@ public class InstallOptions : ICommandOptions
     [Option("directory", "d", "The directory where the downloaded version should be installed", OptionDataType.String)]
     public string? Directory { get; set; } = FS.GodotVersionsDir.Path;
 
-    public CliArgValidation Validate()
+    public OptionValidation Validate()
     {
         if (Version == null && !Latest)
         {
-            return CliArgValidation.Failed("Either --version or --latest must be provided");
+            return OptionValidation.Failed("Either --version or --latest must be provided");
         }
 
         if (Platform == Platform.Windows && (Architecture == Architecture.Arm32 || Architecture == Architecture.Arm64))
         {
-            return CliArgValidation.Failed($"Architecture {Architecture} not supported on Windows platform");
+            return OptionValidation.Failed($"Architecture {Architecture} not supported on Windows platform");
         }
 
         if (Platform == Platform.Linux && (Version?.Any(v => v.Start.Major < 4) ?? false))
         {
-            return CliArgValidation.Failed("GDMan does not support Godot version < 4 on Linux");
+            return OptionValidation.Failed("GDMan does not support Godot version < 4 on Linux");
         }
 
-        return CliArgValidation.Success();
+        return OptionValidation.Success();
     }
 }

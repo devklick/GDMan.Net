@@ -1,12 +1,12 @@
 using System.Text;
 
-namespace GDMan.Cli.Args;
+namespace GDMan.Cli.Help;
 
 public class CommandHelpInfo : CliHelpInfo
 {
-    public List<CliArgHelpInfo> ArgsInfo { get; } =
+    public List<CliOptionHelpInfo> ArgsInfo { get; } =
     [
-        new CliArgHelpInfo(FullName, ShortName, "Shows this help information")
+        new CliOptionHelpInfo(FullName, ShortName, "Shows this help information")
     ];
 
     public override string ToString()
@@ -22,6 +22,6 @@ public class CommandHelpInfo : CliHelpInfo
         return sb.ToString().TrimEnd('\n').TrimEnd('\r');
     }
 
-    public void Add(CliArgHelpInfo cliArg)
-        => ArgsInfo.Add(cliArg);
+    public void Add(CliOptionHelpInfo optionHelp)
+        => ArgsInfo.Add(optionHelp);
 }

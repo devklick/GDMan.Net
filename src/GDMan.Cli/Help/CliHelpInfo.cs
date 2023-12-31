@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace GDMan.Cli.Args;
+namespace GDMan.Cli.Help;
 
 public class CliHelpInfo
 {

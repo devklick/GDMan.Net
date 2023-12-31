@@ -1,6 +1,5 @@
 using System.Reflection;
 
-using GDMan.Cli.Args;
 using GDMan.Cli.Options;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
@@ -33,7 +32,7 @@ public class OptionAttribute : Attribute
         if (!ShortName.StartsWith('-')) ShortName = $"-{ShortName}";
     }
 
-    public virtual CliArgValidation Validate(PropertyInfo propertyInfo, object? value) => Type switch
+    public virtual OptionValidation Validate(PropertyInfo propertyInfo, object? value) => Type switch
     {
         OptionDataType.String => ValidateString(propertyInfo, value),
         OptionDataType.Boolean => ValidateBoolean(propertyInfo, value),
@@ -41,31 +40,31 @@ public class OptionAttribute : Attribute
         _ => throw new NotImplementedException($"Unsupported type ${Type} for CliArgAttribute")
     };
 
-    private static CliArgValidation ValidateString(PropertyInfo propertyInfo, object? value)
+    private static OptionValidation ValidateString(PropertyInfo propertyInfo, object? value)
     {
         if (propertyInfo.PropertyType == typeof(SemVersionRange))
         {
             return SemVersionRange.TryParse(value?.ToString(), out var semVer)
-                ? CliArgValidation.Success(semVer)
-                : CliArgValidation.Failed();
+                ? OptionValidation.Success(semVer)
+                : OptionValidation.Failed();
         }
-        return CliArgValidation.Success(value?.ToString() ?? "");
+        return OptionValidation.Success(value?.ToString() ?? "");
     }
 
-    private CliArgValidation ValidateBoolean(PropertyInfo _, object? value)
+    private OptionValidation ValidateBoolean(PropertyInfo _, object? value)
     {
-        if (IsFlag) return CliArgValidation.Success(true);
+        if (IsFlag) return OptionValidation.Success(true);
 
         if (!bool.TryParse((string)value!, out var boolValue))
         {
-            return CliArgValidation.Failed();
+            return OptionValidation.Failed();
         }
-        return CliArgValidation.Success(boolValue);
+        return OptionValidation.Success(boolValue);
     }
 
-    private static CliArgValidation ValidateEnum(PropertyInfo propertyInfo, object? value)
+    private static OptionValidation ValidateEnum(PropertyInfo propertyInfo, object? value)
     {
-        if (value == null) return CliArgValidation.Failed();
+        if (value == null) return OptionValidation.Failed();
 
         var values = Enum.GetValues(propertyInfo.PropertyType);
 
@@ -73,7 +72,7 @@ public class OptionAttribute : Attribute
         {
             // If the specified value matches the enum name, regardless of case
             if (e.ToString()?.ToLower() == value.ToString()?.ToLower())
-                return CliArgValidation.Success(e);
+                return OptionValidation.Success(e);
 
             // If the specified value matches one of the enum aliases, regardless of case
             var aliasAttr = ((Enum)e).GetAttribute<AliasAttribute>();
@@ -81,11 +80,11 @@ public class OptionAttribute : Attribute
             {
                 if (value.ToString()?.ToLower() == alias.ToLower())
                 {
-                    return CliArgValidation.Success(e);
+                    return OptionValidation.Success(e);
                 }
             }
         }
 
-        return CliArgValidation.Failed();
+        return OptionValidation.Failed();
     }
 }

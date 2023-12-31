@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace GDMan.Cli.Args;
+namespace GDMan.Cli.Help;
 
 /// <summary>
 /// Class representing the top-level help information for the CLI application. 

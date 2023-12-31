@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-using GDMan.Cli.Args;
 using GDMan.Cli.Options;
+using GDMan.Cli.Parsing;
 using GDMan.Core.Services;
 using GDMan.Core.Services.Github;
 

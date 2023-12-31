@@ -1,6 +1,7 @@
+using GDMan.Cli.Help;
 using GDMan.Cli.Options;
 
-namespace GDMan.Cli.Args;
+namespace GDMan.Cli.Parsing;
 
 public class ParseResult
 {

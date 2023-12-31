@@ -7,5 +7,5 @@ namespace GDMan.Cli.Options;
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
 public interface ICommandOptions
 {
-    public CliArgValidation Validate();
+    public OptionValidation Validate();
 }

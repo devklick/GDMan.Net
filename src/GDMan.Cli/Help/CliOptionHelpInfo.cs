@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace GDMan.Cli.Args;
+namespace GDMan.Cli.Help;
 
-public class CliArgHelpInfo(string fullName, string shortName, string description)
+public class CliOptionHelpInfo(string fullName, string shortName, string description)
 {
     private readonly string _ = "  ";
     public string FullName { get; } = fullName;

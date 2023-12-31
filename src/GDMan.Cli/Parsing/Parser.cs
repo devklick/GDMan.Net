@@ -3,13 +3,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using GDMan.Cli.Attributes;
+using GDMan.Cli.Help;
 using GDMan.Cli.Options;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 
 using Semver;
 
-namespace GDMan.Cli.Args;
+namespace GDMan.Cli.Parsing;
 
 public class Parser
 {
@@ -99,7 +100,7 @@ public class Parser
         {
             var typeInfo = GetTypeInfo(argProp, attr);
 
-            var cliArg = new CliArgHelpInfo(attr.FullName, attr.ShortName, attr.Description)
+            var cliArg = new CliOptionHelpInfo(attr.FullName, attr.ShortName, attr.Description)
             {
                 Default = GetDefault(instance, argProp),
                 Type = typeInfo.Type,
@@ -119,7 +120,7 @@ public class Parser
     private static string? GetDescription(MemberInfo prop)
         => prop.GetCustomAttribute<DescriptionAttribute>()?.Description;
 
-    private static CliArgTypeDefinition GetTypeInfo(PropertyInfo argProp, OptionAttribute attr)
+    private static OptionTypeDefinition GetTypeInfo(PropertyInfo argProp, OptionAttribute attr)
     {
         if (argProp.PropertyType == typeof(SemVersionRange))
         {
@@ -141,22 +142,22 @@ public class Parser
         throw new NotImplementedException($"Unsupported type ${argProp.PropertyType} for CliArgAttribute");
     }
 
-    private static CliArgTypeDefinition GetSemVersionTypeInfo(PropertyInfo argProp)
+    private static OptionTypeDefinition GetSemVersionTypeInfo(PropertyInfo argProp)
     {
-        return new CliArgTypeDefinition("String", "Valid sematic version range");
+        return new OptionTypeDefinition("String", "Valid sematic version range");
     }
 
-    private static CliArgTypeDefinition GetBoolTypeInfo(PropertyInfo argProp, OptionAttribute attr)
+    private static OptionTypeDefinition GetBoolTypeInfo(PropertyInfo argProp, OptionAttribute attr)
         => attr.IsFlag ? new("Boolean Flag", "Present (True) or Omitted (False)") : new("Boolean", "True or False");
 
-    private static CliArgTypeDefinition GetStringTypeInfo(PropertyInfo argProp)
+    private static OptionTypeDefinition GetStringTypeInfo(PropertyInfo argProp)
     {
         return new("String", "Anything");
     }
 
     [UnconditionalSuppressMessage("AssemblyLoadTrimming", "IL2075",
         Justification = "Unable to fix properly and seems to work as-is, so suppressing error")]
-    private static CliArgTypeDefinition GetEnumTypeInfo(PropertyInfo argProp)
+    private static OptionTypeDefinition GetEnumTypeInfo(PropertyInfo argProp)
     {
         var allowedValues = Enum.GetValues(argProp.PropertyType).Cast<Enum>().Select(e =>
         {
