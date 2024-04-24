@@ -18,9 +18,9 @@
       // prettier-ignore
       "args": [
         "install", 
-        "--help"
-        // "--latest", 
-        // "--flavour", "mono"
+        // "--help",
+        "--latest", 
+        "--flavour", "mono"
       ]
     },
     {

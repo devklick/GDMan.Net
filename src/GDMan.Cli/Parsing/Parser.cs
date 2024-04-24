@@ -38,7 +38,9 @@ public class Parser
             return result;
         }
 
-        var i = 0;
+        // skip first arg, we've already handled it
+        // by determining the command to run
+        var i = 1;
         while (i < args.Length)
         {
             var name = args[i];
