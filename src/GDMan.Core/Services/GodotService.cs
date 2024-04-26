@@ -12,7 +12,7 @@ public class GodotService(GithubApiService github)
 {
     private readonly GithubApiService _gh = github;
 
-    public async Task<Result<object>> ProcessAsync(
+    public async Task<Result<object>> InstallAsync(
         SemVersionRange? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {

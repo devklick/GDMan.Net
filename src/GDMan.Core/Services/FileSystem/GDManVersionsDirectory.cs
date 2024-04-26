@@ -35,7 +35,8 @@ public class GDManVersionsDirectory(string gdmanDir, HttpClient? client = null)
         if (Directory.Exists(path))
         {
             directory = new GodotVersionDirectory(path);
-            return true;
+
+            if (directory.HasExecutable()) return true;
         }
 
         directory = null;

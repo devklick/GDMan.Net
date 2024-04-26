@@ -126,4 +126,17 @@ public class GodotVersionDirectory
 
         throw new FileNotFoundException($"Cannot find executable file in version directory {path}");
     }
+
+    public bool HasExecutable()
+    {
+        try
+        {
+            GetExecutablePath(Path);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

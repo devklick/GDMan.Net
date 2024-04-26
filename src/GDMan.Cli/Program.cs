@@ -40,7 +40,7 @@ class Program
             new GithubApiService()
         );
 
-        var result = await godot.ProcessAsync(
+        var result = await godot.InstallAsync(
             command.Version,
             command.Latest,
             command.Platform,
