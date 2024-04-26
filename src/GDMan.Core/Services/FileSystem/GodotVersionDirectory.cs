@@ -26,6 +26,7 @@ public class GodotVersionDirectory
 
     public void ExtractZip()
     {
+
         var options = new ExtractionOptions
         {
             ExtractFullPath = true,

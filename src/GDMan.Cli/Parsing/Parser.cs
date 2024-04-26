@@ -8,19 +8,27 @@ using GDMan.Cli.Options;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 
+using Microsoft.Extensions.Logging;
+
 using Semver;
 
 namespace GDMan.Cli.Parsing;
 
-public class Parser
+public class Parser(ILogger<Parser> logger)
 {
-    public static ParseResult Parse<T1>(params string[] args)
+    private readonly ILogger<Parser> _logger = logger;
+
+    public ParseResult Parse<T1>(params string[] args)
         where T1 : ICommandOptions, new()
     {
+        _logger.LogTrace("Parsing args", args);
+
         var result = new ParseResult();
 
-        if (!TryInitCommandOptions<T1>(args.First(), out var options, out var helpInfo))
+        var arg1 = args.First();
+        if (!TryInitCommandOptions<T1>(arg1, out var options, out var helpInfo))
         {
+            result.Errors.Add($"{arg1} is not a known command");
             result.HelpInfo = helpInfo;
             result.RequiresHelp = true;
             return result;
@@ -44,6 +52,8 @@ public class Parser
         while (i < args.Length)
         {
             var name = args[i];
+            _logger.LogDebug($"Processing arg at position {i}: {name}");
+
             var (argProp, attr) = props.FirstOrDefault(a => a.attr.FullName == name || a.attr.ShortName == name);
 
             if (attr == null)
@@ -52,7 +62,18 @@ public class Parser
                 return result;
             }
 
-            var value = attr.IsFlag ? null : args.Length >= i + 2 ? args[i + 1] : null;
+            string? value = null;
+
+            if (attr.IsFlag)
+            {
+                _logger.LogDebug($"Arg at position {i} found to be a flag");
+            }
+            else
+            {
+                value = args.Length >= i + 2 ? args[i + 1] : null;
+                _logger.LogDebug($"Arg at position {i} found to have value {value}");
+            }
+
 
             var argValidation = attr.Validate(argProp, value);
 

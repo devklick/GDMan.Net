@@ -5,15 +5,18 @@ using GDMan.Core.Extensions;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
 
+using Microsoft.Extensions.Logging;
+
 using Semver;
 
 namespace GDMan.Core.Services.Github;
 
-public class GithubApiService(WebApiService webApiService)
+public class GithubApiService(WebApiService webApiService, ILogger<GithubApiService> logger)
 {
     private readonly WebApiService _api = webApiService;
+    private readonly ILogger<GithubApiService> _logger = logger;
 
-    public GithubApiService() : this(new WebApiService(new HttpClient
+    public GithubApiService(ILogger<GithubApiService> logger) : this(new WebApiService(new HttpClient
     {
         BaseAddress = new("https://api.github.com"),
         DefaultRequestHeaders =
@@ -22,7 +25,7 @@ public class GithubApiService(WebApiService webApiService)
              {"Accept", "application/vnd.github+json"},
              {"X-GitHub-Api-Version", "2022-11-28"},
         }
-    }))
+    }), logger)
     { }
 
     public async Task<Result<IEnumerable<Release>>> GetReleasesAsync(string owner, string repo)

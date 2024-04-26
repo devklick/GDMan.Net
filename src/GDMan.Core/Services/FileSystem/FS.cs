@@ -3,23 +3,22 @@ using System.Text;
 using Semver;
 
 using GDMan.Core.Models;
+using Microsoft.Extensions.Logging;
 
 namespace GDMan.Core.Services.FileSystem;
 
-public class FS
+public class FS(ILogger<FS> logger, GDManBinDirectory bin, GDManVersionsDirectory versions)
 {
-    public static readonly string GDManDirectory = Path.Join(
-        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-        ".gdman"
-    );
+    public static readonly KnownPaths Paths = new();
 
-    public static GDManBinDirectory GDManBinDir { get; } = new GDManBinDirectory(GDManDirectory);
-    public static GDManVersionsDirectory GodotVersionsDir { get; } = new GDManVersionsDirectory(GDManDirectory);
+    private readonly ILogger<FS> _logger = logger;
+    public GDManBinDirectory GDManBinDir { get; } = bin;
+    public GDManVersionsDirectory GodotVersionsDir { get; } = versions;
 
-    public static void SetActive(GodotVersionDirectory version)
+    public void SetActive(GodotVersionDirectory version)
         => GDManBinDir.CreateOrUpdateGodotLink(version.ExecutablePath);
 
-    public static string GenerateVersionName(SemVersion version, Platform platform, Architecture architecture, Flavour flavour)
+    public string GenerateVersionName(SemVersion version, Platform platform, Architecture architecture, Flavour flavour)
     {
         var sb = new StringBuilder();
         sb.Append("Godot_v");
@@ -48,7 +47,7 @@ public class FS
     /// <param name="architecture"></param>
     /// <param name="flavour"></param>
     /// <returns></returns>
-    public static string GenerateAssetName(Platform platform, Architecture architecture, Flavour flavour)
+    public string GenerateAssetName(Platform platform, Architecture architecture, Flavour flavour)
     {
         var sb = new StringBuilder();
         if (flavour == Flavour.Mono) sb.Append("mono_");

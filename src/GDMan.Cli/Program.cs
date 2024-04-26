@@ -1,18 +1,48 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 
 using GDMan.Cli.Options;
 using GDMan.Cli.Parsing;
 using GDMan.Core.Services;
 using GDMan.Core.Services.Github;
+using SharpCompress.Factories;
+using Microsoft.Extensions.DependencyInjection;
+using GDMan.Core.Services.FileSystem;
 
 namespace GDMan.Cli;
 
 class Program
 {
-    static async Task Main(string[] args)
-        => await HandleResult(Parser.Parse<InstallOptions>(args));
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    private static ServiceProvider _serviceProvider;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-    private static async Task HandleResult(ParseResult cliArgs)
+    static async Task Main(string[] args)
+    {
+        _serviceProvider = new ServiceCollection()
+            .AddLogging(builder =>
+            {
+                builder.AddSimpleConsole(options =>
+                {
+                    options.SingleLine = true;
+                });
+                builder.SetMinimumLevel(args.Contains("--verbose") ? LogLevel.Trace : LogLevel.Information);
+            })
+            .AddSingleton<GithubApiService>()
+            .AddSingleton<GodotService>()
+            .AddSingleton<Parser>()
+            .AddSingleton<FS>()
+            .AddSingleton<GDManBinDirectory>()
+            .AddSingleton<GDManVersionsDirectory>()
+            .AddSingleton<KnownPaths>()
+            .BuildServiceProvider();
+
+        var parser = _serviceProvider.GetRequiredService<Parser>();
+
+        await HandleParseResult(parser.Parse<InstallOptions>(args));
+    }
+
+    private static async Task HandleParseResult(ParseResult cliArgs)
     {
         if (cliArgs.RequiresHelp)
         {
@@ -24,8 +54,12 @@ class Program
             HandleError(cliArgs);
         }
 
-        await RunAsync(cliArgs.Options
-            ?? throw new NullReferenceException("Expected Options to have a value but found null"));
+        if (cliArgs.Options == null)
+        {
+            throw new NullReferenceException("Expected Options to have a value but found null");
+        }
+
+        await RunAsync(cliArgs.Options);
     }
 
     private static Task RunAsync(ICommandOptions command) => command switch
@@ -36,9 +70,11 @@ class Program
 
     private static async Task RunInstallAsync(InstallOptions command)
     {
-        var godot = new GodotService(
-            new GithubApiService()
-        );
+        var logger = _serviceProvider.GetRequiredService<ILogger<Program>>();
+
+        logger.LogInformation($"Processing install command");
+
+        var godot = _serviceProvider.GetRequiredService<GodotService>();
 
         var result = await godot.InstallAsync(
             command.Version,
@@ -47,6 +83,8 @@ class Program
             command.Architecture,
             command.Flavour
         );
+
+        logger.LogInformation("Done");
     }
 
 

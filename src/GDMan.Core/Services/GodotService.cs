@@ -4,13 +4,17 @@ using GDMan.Core.Models.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Services.Github;
 
+using Microsoft.Extensions.Logging;
+
 using Semver;
 
 namespace GDMan.Core.Services;
 
-public class GodotService(GithubApiService github)
+public class GodotService(GithubApiService github, ILogger<GodotService> logger, FS fs)
 {
     private readonly GithubApiService _gh = github;
+    private readonly ILogger _logger = logger;
+    private readonly FS _fs = fs;
 
     public async Task<Result<object>> InstallAsync(
         SemVersionRange? versionRange, bool latest, Platform platform,
@@ -26,11 +30,12 @@ public class GodotService(GithubApiService github)
         //      : No, proceed to download and install
         if (versionRange?.IsExactVersion(out var version) ?? false)
         {
-            versionName = FS.GenerateVersionName(version, platform, architecture, flavour);
+            versionName = _fs.GenerateVersionName(version, platform, architecture, flavour);
 
-            if (FS.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
+            if (_fs.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
             {
-                FS.SetActive(versionDir);
+                _logger.LogInformation($"Version {versionName} already installed, setting active");
+                _fs.SetActive(versionDir);
                 return new Result<object>(ResultStatus.OK, null);
             }
         }
@@ -62,11 +67,12 @@ public class GodotService(GithubApiService github)
 
         version = SemVersion.Parse(release.TagName, SemVersionStyles.Any);
 
-        versionName = FS.GenerateVersionName(version, platform, architecture, flavour);
+        versionName = _fs.GenerateVersionName(version, platform, architecture, flavour);
 
-        if (FS.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
+        if (_fs.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
         {
-            FS.SetActive(versionDir);
+            _logger.LogInformation($"Version {versionName} already installed, setting active");
+            _fs.SetActive(versionDir);
             return new Result<object>(ResultStatus.OK, null);
         }
         // -------------------------------------------------
@@ -77,9 +83,9 @@ public class GodotService(GithubApiService github)
         var downloadUrl = release.Assets.SingleOrDefault()?.BrowserDownloadUrl
             ?? throw new InvalidOperationException("Unable to find exact version asset");
 
-        versionDir = await FS.GodotVersionsDir.Install(downloadUrl, versionName);
+        versionDir = await _fs.GodotVersionsDir.Install(downloadUrl, versionName);
 
-        FS.SetActive(versionDir);
+        _fs.SetActive(versionDir);
         // -------------------------------------------------
 
         return new Result<object>();
@@ -89,7 +95,7 @@ public class GodotService(GithubApiService github)
         SemVersionRange? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {
-        var assetNameChecks = new List<string> { FS.GenerateAssetName(platform, architecture, flavour) };
+        var assetNameChecks = new List<string> { _fs.GenerateAssetName(platform, architecture, flavour) };
 
         if (flavour != Flavour.Mono) assetNameChecks.Add("^(?!.*mono).*$");
 
@@ -101,6 +107,8 @@ public class GodotService(GithubApiService github)
             + "Make sure you can access https://github.com/godotengine/godot/releases/"
             + Environment.NewLine + string.Join(Environment.NewLine, release.Messages));
         }
+
+        _logger.LogInformation($"Found github release for version godot version {release.Value?.Assets.First().Name}");
 
         return release;
     }

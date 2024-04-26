@@ -11,7 +11,7 @@ namespace GDMan.Cli.Options;
 
 [Command("install", "i", "Installs the specified version of Godot")]
 [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
-public class InstallOptions : ICommandOptions
+public class InstallOptions : BaseOptions, ICommandOptions
 {
     [Option("latest", "l", "Whether or not the latest version should be fetched. "
         + "If used in conjunction with the Version argument and multiple matching "
@@ -31,7 +31,7 @@ public class InstallOptions : ICommandOptions
     public Flavour Flavour { get; set; } = FlavourHelper.FromEnvVar() ?? Flavour.Standard;
 
     [Option("directory", "d", "The directory where the downloaded version should be installed", OptionDataType.String)]
-    public string? Directory { get; set; } = FS.GodotVersionsDir.Path;
+    public string? Directory { get; set; } = FS.Paths.Versions;
 
     public OptionValidation Validate()
     {

@@ -6,7 +6,8 @@
     <LangVersion>12</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Semver" Version="2.3.0"/>
-    <PackageReference Include="SharpCompress" Version="0.35.0"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Semver" Version="2.3.0" />
+    <PackageReference Include="SharpCompress" Version="0.35.0" />
   </ItemGroup>
 </Project>
