@@ -17,7 +17,7 @@ jobs:
       BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -56,3 +56,55 @@ jobs:
         run: echo "NEXT_RELEASE_VERSION=${{env.RELEASE_VERSION}}" >> $GITHUB_OUTPUT
 
   
+
+  publish-and-release:
+    # Publishes, packages and releases the next version,
+    # only if one has been defined in the previous job.
+    # This job will only run on the main branch
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: ${{needs.build-and-test.outputs.next-release-version &&
+      needs.build-and-test.outputs.branch-name == 'dev'}}
+    env:
+      RELEASE_VERSION: ${{needs.build-and-test.outputs.next-release-version}}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run publish Windows
+        run: dotnet publish -c release -r win-x64 ./src/GDMan.Cli "-p:Version=${{ env.RELEASE_VERSION }}" -o build/win-x64
+
+      - name: ZIP Windows output
+        run: cd build/win-x64 && zip -r ../GDMan_win-x64.zip * && cd ../..
+
+      - name: Run publish Linux
+        run: dotnet publish -c release -r linux-x64 ./src/GDMan.Cli -p:Version=${{ env.RELEASE_VERSION }} -o build/linux-x64
+
+      - name: ZIP Linux output
+        run: cd build/linux-x64 && zip -r ../GDMan_linux-x64.zip * && cd ../..
+
+      - name: Run publish OSX
+        run: dotnet publish -c release -r osx-x64 ./src/GDMan.Cli -p:Version=${{ env.RELEASE_VERSION }} -o build/osx-x64
+
+      - name: ZIP OSX output
+        run: cd build/osx-x64 && zip -r ../GDMan_osx-x64.zip * && cd ../..
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release --branches main
