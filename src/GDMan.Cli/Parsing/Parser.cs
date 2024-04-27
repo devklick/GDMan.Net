@@ -8,20 +8,18 @@ using GDMan.Cli.Options;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 
-using Microsoft.Extensions.Logging;
-
 using Semver;
 
 namespace GDMan.Cli.Parsing;
 
-public class Parser(ILogger<Parser> logger)
+public class Parser(ConsoleLogger logger)
 {
-    private readonly ILogger<Parser> _logger = logger;
+    private readonly ConsoleLogger _logger = logger;
 
     public ParseResult Parse<T1>(params string[] args)
         where T1 : ICommandOptions, new()
     {
-        _logger.LogTrace("Parsing args", args);
+        _logger.LogTrace("Parsing args");
 
         var result = new ParseResult();
 

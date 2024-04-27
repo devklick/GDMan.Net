@@ -4,16 +4,14 @@ using GDMan.Core.Models.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Services.Github;
 
-using Microsoft.Extensions.Logging;
-
 using Semver;
 
 namespace GDMan.Core.Services;
 
-public class GodotService(GithubApiService github, ILogger<GodotService> logger, FS fs)
+public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
 {
     private readonly GithubApiService _gh = github;
-    private readonly ILogger _logger = logger;
+    private readonly ConsoleLogger _logger = logger;
     private readonly FS _fs = fs;
 
     public async Task<Result<object>> InstallAsync(
@@ -108,7 +106,7 @@ public class GodotService(GithubApiService github, ILogger<GodotService> logger,
             + Environment.NewLine + string.Join(Environment.NewLine, release.Messages));
         }
 
-        _logger.LogInformation($"Found github release for version godot version {release.Value?.Assets.First().Name}");
+        _logger.LogInformation($"Found github release for {release.Value?.Assets.First().Name}");
 
         return release;
     }

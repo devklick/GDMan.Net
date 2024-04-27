@@ -1,12 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 using GDMan.Cli.Options;
 using GDMan.Cli.Parsing;
 using GDMan.Core.Services;
 using GDMan.Core.Services.Github;
-using SharpCompress.Factories;
-using Microsoft.Extensions.DependencyInjection;
 using GDMan.Core.Services.FileSystem;
 
 namespace GDMan.Cli;
@@ -20,14 +18,7 @@ class Program
     static async Task Main(string[] args)
     {
         _serviceProvider = new ServiceCollection()
-            .AddLogging(builder =>
-            {
-                builder.AddSimpleConsole(options =>
-                {
-                    options.SingleLine = true;
-                });
-                builder.SetMinimumLevel(args.Contains("--verbose") ? LogLevel.Trace : LogLevel.Information);
-            })
+            .AddSingleton(new ConsoleLogger(args.Contains("--verbose") ? Core.Infrastructure.LogLevel.Trace : Core.Infrastructure.LogLevel.Information))
             .AddSingleton<GithubApiService>()
             .AddSingleton<GodotService>()
             .AddSingleton<Parser>()
@@ -70,7 +61,7 @@ class Program
 
     private static async Task RunInstallAsync(InstallOptions command)
     {
-        var logger = _serviceProvider.GetRequiredService<ILogger<Program>>();
+        var logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
 
         logger.LogInformation($"Processing install command");
 

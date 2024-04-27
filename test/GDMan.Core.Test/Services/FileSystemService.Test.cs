@@ -3,9 +3,6 @@ using FluentAssertions;
 using GDMan.Core.Models;
 using GDMan.Core.Services.FileSystem;
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-
 using Moq;
 
 using Semver;
@@ -18,10 +15,11 @@ public class FileSystemServiceTest
     public FileSystemServiceTest()
     {
         var paths = new KnownPaths();
+        var logger = new ConsoleLogger();
         _fs = new FS(
-            Mock.Of<ILogger<FS>>(),
-            new GDManBinDirectory(paths, Mock.Of<ILogger<GDManBinDirectory>>()),
-            new GDManVersionsDirectory(paths, Mock.Of<ILogger<GDManVersionsDirectory>>())
+            logger,
+            new GDManBinDirectory(paths, logger),
+            new GDManVersionsDirectory(paths, logger)
         );
     }
     #region Linux

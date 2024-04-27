@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 namespace GDMan.Core.Services.FileSystem;
 
 /// <summary>
@@ -10,9 +8,11 @@ public class GDManBinDirectory
 {
     public string Path { get; }
     public string GodotLinkPath { get; }
+    private readonly ConsoleLogger _logger;
 
-    public GDManBinDirectory(KnownPaths paths, ILogger<GDManBinDirectory> logger)
+    public GDManBinDirectory(KnownPaths paths, ConsoleLogger logger)
     {
+        _logger = logger;
         Path = paths.Bin;
         GodotLinkPath = System.IO.Path.Combine(Path, "godot");
         Directory.CreateDirectory(Path);

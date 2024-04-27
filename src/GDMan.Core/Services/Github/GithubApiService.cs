@@ -1,22 +1,19 @@
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
 using GDMan.Core.Extensions;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
 
-using Microsoft.Extensions.Logging;
-
 using Semver;
 
 namespace GDMan.Core.Services.Github;
 
-public class GithubApiService(WebApiService webApiService, ILogger<GithubApiService> logger)
+public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
 {
     private readonly WebApiService _api = webApiService;
-    private readonly ILogger<GithubApiService> _logger = logger;
+    private readonly ConsoleLogger _logger = logger;
 
-    public GithubApiService(ILogger<GithubApiService> logger) : this(new WebApiService(new HttpClient
+    public GithubApiService(ConsoleLogger logger) : this(new WebApiService(new HttpClient
     {
         BaseAddress = new("https://api.github.com"),
         DefaultRequestHeaders =

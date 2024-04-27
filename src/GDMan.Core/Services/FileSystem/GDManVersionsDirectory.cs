@@ -1,20 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 
-using GDMan.Core.Config;
-
-using Microsoft.Extensions.Logging;
-
 namespace GDMan.Core.Services.FileSystem;
 
 /// <summary>
 /// Class representing the directory where Godot versions are installed. 
 /// E.g. <c>.gdman/versions</c>
 /// </summary>
-public class GDManVersionsDirectory(KnownPaths paths, ILogger<GDManVersionsDirectory> logger, HttpClient? client = null)
+public class GDManVersionsDirectory(KnownPaths paths, ConsoleLogger logger, HttpClient? client = null)
 {
     public string Path { get; } = paths.Versions;
 
-    private readonly ILogger<GDManVersionsDirectory> _logger = logger;
+    private readonly ConsoleLogger _logger = logger;
     private readonly HttpClient _client = client ?? new HttpClient();
 
     public async Task<GodotVersionDirectory> Install(string url, string destinationFolderName)

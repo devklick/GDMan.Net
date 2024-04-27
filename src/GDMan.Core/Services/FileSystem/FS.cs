@@ -3,15 +3,14 @@ using System.Text;
 using Semver;
 
 using GDMan.Core.Models;
-using Microsoft.Extensions.Logging;
 
 namespace GDMan.Core.Services.FileSystem;
 
-public class FS(ILogger<FS> logger, GDManBinDirectory bin, GDManVersionsDirectory versions)
+public class FS(ConsoleLogger logger, GDManBinDirectory bin, GDManVersionsDirectory versions)
 {
     public static readonly KnownPaths Paths = new();
 
-    private readonly ILogger<FS> _logger = logger;
+    private readonly ConsoleLogger _logger = logger;
     public GDManBinDirectory GDManBinDir { get; } = bin;
     public GDManVersionsDirectory GodotVersionsDir { get; } = versions;
 
