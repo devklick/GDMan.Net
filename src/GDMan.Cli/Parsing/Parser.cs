@@ -17,15 +17,16 @@ public class Parser(ConsoleLogger logger)
 {
     private readonly ConsoleLogger _logger = logger;
 
-    public ParseResult Parse<T1>(params string[] args)
+    public ParseResult Parse<T1, T2>(params string[] args)
         where T1 : ICommandOptions, new()
+        where T2 : ICommandOptions, new()
     {
         _logger.LogTrace("Parsing args");
 
         var result = new ParseResult();
 
         var arg1 = args.First();
-        if (!TryInitCommandOptions<T1>(arg1, out var options, out var helpInfo))
+        if (!TryInitCommandOptions<T1, T2>(arg1, out var options, out var helpInfo))
         {
             result.Errors.Add($"{arg1} is not a known command");
             result.HelpInfo = helpInfo;
@@ -97,16 +98,35 @@ public class Parser(ConsoleLogger logger)
         return result;
     }
 
-    private static bool TryInitCommandOptions<T1>(string? arg1, [NotNullWhen(true)] out ICommandOptions? options, out CliHelpInfo helpInfo)
+    private static bool TryInitCommandOptions<T1, T2>(string? arg1, [NotNullWhen(true)] out ICommandOptions? options, out AppHelpInfo helpInfo)
+        where T1 : ICommandOptions, new()
+        where T2 : ICommandOptions, new()
+    {
+        ICommandOptions? returnOptions = null;
+        helpInfo = new AppHelpInfo();
+
+        if (TryInitCommandOptions<T1>(arg1, out var op1, ref helpInfo))
+        {
+            returnOptions = op1;
+        }
+
+        if (TryInitCommandOptions<T2>(arg1, out var op2, ref helpInfo))
+        {
+            returnOptions = op2;
+        }
+
+        options = returnOptions;
+
+        return options != null;
+    }
+
+    private static bool TryInitCommandOptions<T1>(string? arg1, [NotNullWhen(true)] out ICommandOptions? options, ref AppHelpInfo helpInfo)
         where T1 : ICommandOptions, new()
     {
         var attr = typeof(T1).GetCustomAttribute<CommandAttribute>()
             ?? throw new InvalidOperationException($"Type does not appear to represent a known command. {nameof(CommandAttribute)} expected");
 
-        helpInfo = new AppHelpInfo
-        {
-            KnownCommands = [(attr.FullName, attr.ShortName, attr.Description)]
-        };
+        helpInfo.KnownCommands.Add((attr.FullName, attr.ShortName, attr.Description));
 
         options = (arg1 == attr.FullName || arg1 == attr.ShortName)
             ? Activator.CreateInstance<T1>()

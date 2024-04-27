@@ -7,6 +7,7 @@ using GDMan.Core.Services;
 using GDMan.Core.Services.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Infrastructure;
+using Microsoft.VisualBasic;
 
 namespace GDMan.Cli;
 
@@ -31,7 +32,7 @@ class Program
 
         var parser = _serviceProvider.GetRequiredService<Parser>();
 
-        await HandleParseResult(parser.Parse<InstallOptions>(args));
+        await HandleParseResult(parser.Parse<InstallOptions, ListOptions>(args));
     }
 
     private static async Task HandleParseResult(ParseResult cliArgs)
@@ -57,6 +58,7 @@ class Program
     private static Task RunAsync(ICommandOptions command) => command switch
     {
         InstallOptions i => RunInstallAsync(i),
+        ListOptions i => RunListAsync(i),
         _ => throw new InvalidOperationException()
     };
 
@@ -75,6 +77,24 @@ class Program
             command.Architecture,
             command.Flavour
         );
+
+        logger.LogInformation("Done");
+    }
+
+    private static async Task RunListAsync(ListOptions command)
+    {
+        var logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
+
+        logger.LogInformation($"Processing list command");
+
+        var godot = _serviceProvider.GetRequiredService<GodotService>();
+
+        var result = await godot.ListAsync();
+
+        foreach (var version in result.Value ?? [])
+        {
+            logger.LogInformation(version);
+        }
 
         logger.LogInformation("Done");
     }

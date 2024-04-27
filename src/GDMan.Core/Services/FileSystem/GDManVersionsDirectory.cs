@@ -36,6 +36,9 @@ public class GDManVersionsDirectory(KnownPaths paths, ConsoleLogger logger, Http
         return dir;
     }
 
+    public IEnumerable<string> List()
+        => Directory.GetDirectories(Path).Select(p => new DirectoryInfo(p).Name)!;
+
     public bool AlreadyInstalled(string versionName, [NotNullWhen(true)] out GodotVersionDirectory? directory)
     {
         var path = System.IO.Path.Join(Path, versionName);

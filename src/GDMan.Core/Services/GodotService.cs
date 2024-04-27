@@ -90,6 +90,17 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
         return new Result<object>();
     }
 
+    public async Task<Result<IEnumerable<string>>> ListAsync()
+    {
+        var versions = await Task.FromResult(_fs.GodotVersionsDir.List());
+
+        return new Result<IEnumerable<string>>
+        {
+            Value = versions,
+            Status = ResultStatus.OK,
+        };
+    }
+
     private async Task<Result<Release>> FindDownloadAssetAsync(
         SemVersionRange? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
