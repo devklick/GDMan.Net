@@ -14,8 +14,12 @@ namespace GDMan.Cli;
 class Program
 {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable IDE1006 // Naming Styles
     private static ServiceProvider _serviceProvider;
+    private static GodotService _godot;
+    private static ConsoleLogger _logger;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore IDE1006 // Naming Styles
 
     static async Task Main(string[] args)
     {
@@ -30,9 +34,12 @@ class Program
             .AddSingleton<KnownPaths>()
             .BuildServiceProvider();
 
+        _logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
+        _godot = _serviceProvider.GetRequiredService<GodotService>();
+
         var parser = _serviceProvider.GetRequiredService<Parser>();
 
-        await HandleParseResult(parser.Parse<InstallOptions, ListOptions>(args));
+        await HandleParseResult(parser.Parse(args));
     }
 
     private static async Task HandleParseResult(ParseResult cliArgs)
@@ -59,18 +66,15 @@ class Program
     {
         InstallOptions i => RunInstallAsync(i),
         ListOptions i => RunListAsync(i),
+        CurrentOptions i => RunCurrentAsync(i),
         _ => throw new InvalidOperationException()
     };
 
     private static async Task RunInstallAsync(InstallOptions command)
     {
-        var logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
+        _logger.LogInformation($"Processing install command");
 
-        logger.LogInformation($"Processing install command");
-
-        var godot = _serviceProvider.GetRequiredService<GodotService>();
-
-        var result = await godot.InstallAsync(
+        var result = await _godot.InstallAsync(
             command.Version,
             command.Latest,
             command.Platform,
@@ -78,25 +82,28 @@ class Program
             command.Flavour
         );
 
-        logger.LogInformation("Done");
+        _logger.LogInformation("Done");
     }
 
     private static async Task RunListAsync(ListOptions command)
     {
-        var logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
+        _logger.LogInformation($"Processing list command");
 
-        logger.LogInformation($"Processing list command");
-
-        var godot = _serviceProvider.GetRequiredService<GodotService>();
-
-        var result = await godot.ListAsync();
+        var result = await _godot.ListAsync();
 
         foreach (var version in result.Value ?? [])
         {
-            logger.LogInformation(version);
+            _logger.LogInformation(version);
         }
 
-        logger.LogInformation("Done");
+        _logger.LogInformation("Done");
+    }
+
+    private static async Task RunCurrentAsync(CurrentOptions command)
+    {
+        var current = await _godot.GetCurrentVersion();
+
+        _logger.LogInformation(current.Value!);
     }
 
 

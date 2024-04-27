@@ -17,9 +17,10 @@
       "stopAtEntry": false,
       // prettier-ignore
       "args": [
-        "list"
+        "current",
+        // "list"
         // "install", 
-        // "--help",
+        "--help",
         // "--latest", 
         // "--flavour", "mono"
       ]

@@ -10,6 +10,8 @@ public class GDManBinDirectory
 {
     public string Path { get; }
     public string GodotLinkPath { get; }
+    public bool GodotLinkExists => File.Exists(GodotLinkPath);
+    public string? GodotLinkTargetVersion => GodotLinkExists ? new DirectoryInfo(new FileInfo(GodotLinkPath).LinkTarget!).Name : null;
     private readonly ConsoleLogger _logger;
 
     public GDManBinDirectory(KnownPaths paths, ConsoleLogger logger)

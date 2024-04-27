@@ -17,16 +17,14 @@ public class Parser(ConsoleLogger logger)
 {
     private readonly ConsoleLogger _logger = logger;
 
-    public ParseResult Parse<T1, T2>(params string[] args)
-        where T1 : ICommandOptions, new()
-        where T2 : ICommandOptions, new()
+    public ParseResult Parse(params string[] args)
     {
         _logger.LogTrace("Parsing args");
 
         var result = new ParseResult();
 
         var arg1 = args.First();
-        if (!TryInitCommandOptions<T1, T2>(arg1, out var options, out var helpInfo))
+        if (!TryInitCommandOptions(arg1, out var options, out var helpInfo))
         {
             result.Errors.Add($"{arg1} is not a known command");
             result.HelpInfo = helpInfo;
@@ -98,21 +96,24 @@ public class Parser(ConsoleLogger logger)
         return result;
     }
 
-    private static bool TryInitCommandOptions<T1, T2>(string? arg1, [NotNullWhen(true)] out ICommandOptions? options, out AppHelpInfo helpInfo)
-        where T1 : ICommandOptions, new()
-        where T2 : ICommandOptions, new()
+    private static bool TryInitCommandOptions(string? arg1, [NotNullWhen(true)] out ICommandOptions? options, out AppHelpInfo helpInfo)
     {
         ICommandOptions? returnOptions = null;
         helpInfo = new AppHelpInfo();
 
-        if (TryInitCommandOptions<T1>(arg1, out var op1, ref helpInfo))
+        if (TryInitCommandOptions<InstallOptions>(arg1, out var op1, ref helpInfo))
         {
             returnOptions = op1;
         }
 
-        if (TryInitCommandOptions<T2>(arg1, out var op2, ref helpInfo))
+        if (TryInitCommandOptions<ListOptions>(arg1, out var op2, ref helpInfo))
         {
             returnOptions = op2;
+        }
+
+        if (TryInitCommandOptions<CurrentOptions>(arg1, out var op3, ref helpInfo))
+        {
+            returnOptions = op3;
         }
 
         options = returnOptions;

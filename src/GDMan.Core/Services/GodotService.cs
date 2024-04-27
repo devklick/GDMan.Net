@@ -101,6 +101,19 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
         };
     }
 
+    public async Task<Result<string>> GetCurrentVersion()
+    {
+        var current = await Task.FromResult(
+            _fs.GDManBinDir.GodotLinkTargetVersion
+            ?? "No active version");
+
+        return new Result<string>
+        {
+            Status = ResultStatus.OK,
+            Value = current
+        };
+    }
+
     private async Task<Result<Release>> FindDownloadAssetAsync(
         SemVersionRange? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)

@@ -4,10 +4,7 @@ namespace GDMan.Cli.Help;
 
 public class CommandHelpInfo : CliHelpInfo
 {
-    public List<CliOptionHelpInfo> ArgsInfo { get; } =
-    [
-        new CliOptionHelpInfo(FullName, ShortName, "Shows this help information")
-    ];
+    public List<CliOptionHelpInfo> ArgsInfo { get; } = [];
 
     public override string ToString()
     {
