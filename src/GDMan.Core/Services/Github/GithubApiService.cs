@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 
 using GDMan.Core.Extensions;
+using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
 

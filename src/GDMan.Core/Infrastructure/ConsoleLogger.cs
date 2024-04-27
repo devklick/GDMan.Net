@@ -1,13 +1,8 @@
-using GDMan.Core.Infrastructure;
+namespace GDMan.Core.Infrastructure;
 
-public class ConsoleLogger
+public class ConsoleLogger(LogLevel minLogLevel = LogLevel.Information)
 {
-    private readonly LogLevel _minLogLevel;
-
-    public ConsoleLogger(LogLevel minLogLevel)
-    {
-        _minLogLevel = minLogLevel;
-    }
+    private readonly LogLevel _minLogLevel = minLogLevel;
 
     public void LogInformation(string message)
         => Log(LogLevel.Information, message);

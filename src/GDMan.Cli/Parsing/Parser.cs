@@ -7,6 +7,7 @@ using GDMan.Cli.Help;
 using GDMan.Cli.Options;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
+using GDMan.Core.Infrastructure;
 
 using Semver;
 

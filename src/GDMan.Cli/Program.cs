@@ -6,6 +6,7 @@ using GDMan.Cli.Parsing;
 using GDMan.Core.Services;
 using GDMan.Core.Services.Github;
 using GDMan.Core.Services.FileSystem;
+using GDMan.Core.Infrastructure;
 
 namespace GDMan.Cli;
 
@@ -18,7 +19,7 @@ class Program
     static async Task Main(string[] args)
     {
         _serviceProvider = new ServiceCollection()
-            .AddSingleton(new ConsoleLogger(args.Contains("--verbose") ? Core.Infrastructure.LogLevel.Trace : Core.Infrastructure.LogLevel.Information))
+            .AddSingleton(new ConsoleLogger(args.Contains("--verbose") || args.Contains("-vl") ? Core.Infrastructure.LogLevel.Trace : Core.Infrastructure.LogLevel.Information))
             .AddSingleton<GithubApiService>()
             .AddSingleton<GodotService>()
             .AddSingleton<Parser>()

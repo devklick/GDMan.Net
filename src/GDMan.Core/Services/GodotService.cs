@@ -1,4 +1,5 @@
 using GDMan.Core.Extensions;
+using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
 using GDMan.Core.Services.FileSystem;
