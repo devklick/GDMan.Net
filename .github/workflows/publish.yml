@@ -1,0 +1,58 @@
+name: publish
+
+on:
+  push:
+    branches:
+      - dev
+      
+jobs:
+  build-and-test:
+    # Builds and tests the solution
+    # Identifies the next release version number, if there is one
+    runs-on: ubuntu-latest
+    outputs:
+      next-release-version: ${{steps.capture-next-version.outputs.NEXT_RELEASE_VERSION}}
+      branch-name: ${{ github.head_ref || github.ref_name }}
+    env:
+      BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Install .Net dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build
+
+      - name: Test
+        run: dotnet test
+
+      - name: Fetch next version
+        id: fetch-next-version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx semantic-release --branches ${{env.BRANCH_NAME}} --dry-run
+
+      - name: Capture next version
+        id: capture-next-version
+        # RELEASE_VERSION by semantic-release in previous step, see .releaserc.json
+        run: echo "NEXT_RELEASE_VERSION=${{env.RELEASE_VERSION}}" >> $GITHUB_OUTPUT
+
+  

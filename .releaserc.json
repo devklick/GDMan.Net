@@ -1,0 +1,35 @@
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/exec",
+      {
+        "verifyReleaseCmd": "echo RELEASE_VERSION=${nextRelease.version} >> $GITHUB_ENV"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "build/GDMan_win-x64.zip",
+            "label": "GDMan_${nextRelease.gitTag}_win-x64.zip",
+            "name": "GDMan_${nextRelease.gitTag}_win-x64.zip"
+          },
+          {
+            "path": "build/GDMan_linux-x64.zip",
+            "label": "GDMan_${nextRelease.gitTag}_linux-x64.zip",
+            "name": "GDMan_${nextRelease.gitTag}_linux-x64.zip"
+          },
+          {
+            "path": "build/GDMan_osx-x64.zip",
+            "label": "GDMan_${nextRelease.gitTag}_osx-x64.zip",
+            "name": "GDMan_${nextRelease.gitTag}_osx-x64.zip"
+          }
+        ]
+      }
+    ]
+  ]
+}
