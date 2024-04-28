@@ -1,5 +1,3 @@
-using GDMan.Core.Attributes;
-
 namespace GDMan.Core.Models;
 
 public enum Architecture
