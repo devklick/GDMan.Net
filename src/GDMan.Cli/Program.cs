@@ -36,7 +36,14 @@ class Program
 
         var parser = _serviceProvider.GetRequiredService<Parser>();
 
-        await HandleParseResult(parser.Parse(args));
+        try
+        {
+            await HandleParseResult(parser.Parse(args));
+        }
+        catch (Exception ex)
+        {
+            HandleException(ex);
+        }
     }
 
     private static async Task HandleParseResult(ParseResult cliArgs)
@@ -64,14 +71,24 @@ class Program
         InstallOptions i => RunInstallAsync(i),
         ListOptions i => RunListAsync(i),
         CurrentOptions i => RunCurrentAsync(i),
+        UninstallOptions i => RunUninstallAsync(i),
         _ => throw new InvalidOperationException()
     };
 
+    private static async Task RunUninstallAsync(UninstallOptions i)
+    {
+        _logger.LogTrace("Processing uninstall command");
+
+        await _godot.UninstallAsync(i.Version, i.Platform, i.Architecture, i.Flavour, i.Force, i.Unused);
+
+        _logger.LogTrace("Done");
+    }
+
     private static async Task RunInstallAsync(InstallOptions command)
     {
-        _logger.LogInformation($"Processing install command");
+        _logger.LogTrace($"Processing install command");
 
-        var result = await _godot.InstallAsync(
+        await _godot.InstallAsync(
             command.Version,
             command.Latest,
             command.Platform,
@@ -79,44 +96,47 @@ class Program
             command.Flavour
         );
 
-        _logger.LogInformation("Done");
+        _logger.LogTrace("Done");
     }
 
     private static async Task RunListAsync(ListOptions command)
     {
-        _logger.LogInformation($"Processing list command");
+        _logger.LogTrace($"Processing list command");
 
-        var result = await _godot.ListAsync();
+        await _godot.ListAsync();
 
-        foreach (var version in result.Value ?? [])
-        {
-            _logger.LogInformation(version);
-        }
-
-        _logger.LogInformation("Done");
+        _logger.LogTrace("Done");
     }
 
     private static async Task RunCurrentAsync(CurrentOptions command)
     {
-        var current = await _godot.GetCurrentVersion();
+        _logger.LogTrace($"Processing current command");
 
-        _logger.LogInformation(current.Value!);
+        await _godot.GetCurrentVersion();
+
+        _logger.LogTrace($"Done");
     }
 
 
     [DoesNotReturn]
     private static void HandleHelp(ParseResult cliArgs)
     {
-        Console.WriteLine(cliArgs.HelpInfoString);
+        _logger.LogInformation(cliArgs.HelpInfoString);
         Environment.Exit(0);
     }
 
     [DoesNotReturn]
     private static void HandleError(ParseResult cliArgs)
     {
-        Console.WriteLine(string.Join(Environment.NewLine, cliArgs.Errors));
-        Console.WriteLine(Environment.NewLine);
-        Console.WriteLine(cliArgs.HelpInfoString);
+        _logger.LogError(string.Join(Environment.NewLine, new List<string>(cliArgs.Errors.Append(Environment.NewLine))));
+        _logger.LogInformation(cliArgs.HelpInfoString);
+        Environment.Exit(1);
+    }
+
+    [DoesNotReturn]
+    private static void HandleException(Exception ex)
+    {
+        _logger.LogFatal(ex);
         Environment.Exit(1);
     }
 }

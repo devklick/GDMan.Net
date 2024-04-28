@@ -1,5 +1,10 @@
 using System.Runtime.Versioning;
 
+using GDMan.Core.Exceptions;
+using GDMan.Core.Models;
+
+using Semver;
+
 using SharpCompress.Common;
 using SharpCompress.Readers;
 
@@ -9,19 +14,27 @@ namespace GDMan.Core.Services.FileSystem;
 /// Class representing a directory that contains the files 
 /// for a specific version of Godot, e.g. `gdman/versions/Godot_v1.2.3/`
 /// </summary>
-public class GodotVersionDirectory
+public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
 {
     public string Path { get; }
     public string Name { get; }
     public string ExecutablePath => GetExecutablePath(Path);
     public string ZipPath => Directory.GetFiles(Path, "*.zip").Single();
-
+    public SemVersion Version { get; }
+    public Platform Platform { get; }
+    public Architecture Architecture { get; }
+    public Flavour Flavour { get; }
+    public bool IsValid { get; } = true;
 
     public GodotVersionDirectory(string path)
     {
         Path = path;
         Name = System.IO.Path.GetFileName(path);
         Directory.CreateDirectory(path);
+        Version = ParseSemverFromName(Name);
+        Flavour = ParseFlavourFromName(Name);
+        Platform = ParsePlatformFromName(Name);
+        Architecture = ParseArchitectureFromName(Name, Platform);
     }
 
     public void ExtractZip()
@@ -48,6 +61,9 @@ public class GodotVersionDirectory
         // Delete the zip
         File.Delete(ZipPath);
     }
+
+    public void Delete()
+        => Directory.Delete(Path, true);
 
     public void CleanStructure()
     {
@@ -139,4 +155,67 @@ public class GodotVersionDirectory
             return false;
         }
     }
+
+    public bool Equals(GodotVersionDirectory? other)
+        => other != null && other.Path == Path;
+
+    private static SemVersion ParseSemverFromName(string name)
+    {
+        // The semver string is between the first and second underscores
+        var startPos = name.IndexOf('_');
+        var endPos = name.IndexOf('_', startPos + 1);
+
+        if (startPos < 0 || endPos < 0)
+        {
+            throw new InvalidSemVerException(
+                $"Version directory {name} does not match the expected format. " +
+                "Unable to determine the version of Godot this folder relates to");
+        }
+
+        // We +2 to exclude the leading underscore and 'v';
+        // We -2 to exclude the trailing underscore, and because we shifted the start position
+        var semverString = name.Substring(startPos + 2, endPos - startPos - 2);
+
+        return SemVersion.Parse(semverString, SemVersionStyles.Any);
+    }
+
+    private static Architecture ParseArchitectureFromName(string name, Platform platform)
+    {
+        if (platform == Platform.MacOS) return Architecture.Universal;
+        if (platform == Platform.Windows)
+        {
+            if (name.Contains("win32", StringComparison.CurrentCultureIgnoreCase)) return Architecture.X86;
+            if (name.Contains("win64", StringComparison.CurrentCultureIgnoreCase)) return Architecture.X64;
+        }
+        if (platform == Platform.Linux)
+        {
+            if (name.Contains("arm32", StringComparison.CurrentCultureIgnoreCase)) return Architecture.Arm32;
+            if (name.Contains("arm64", StringComparison.CurrentCultureIgnoreCase)) return Architecture.Arm64;
+            if (name.Contains("x86_64", StringComparison.CurrentCultureIgnoreCase)) return Architecture.X64;
+            if (name.Contains("x86_32", StringComparison.CurrentCultureIgnoreCase)) return Architecture.X86;
+        }
+
+        throw new InvalidSemVerException(
+            $"Version directory {name} does not match the expected format. " +
+            "Unable to determine the system architecture that this folder relates to");
+    }
+
+    private static Platform ParsePlatformFromName(string name)
+    {
+        if (name.Contains("win32", StringComparison.CurrentCultureIgnoreCase) || name.Contains("win64", StringComparison.CurrentCultureIgnoreCase))
+            return Platform.Windows;
+
+        if (name.Contains("macos", StringComparison.CurrentCultureIgnoreCase))
+            return Platform.MacOS;
+
+        if (name.Contains("linux", StringComparison.CurrentCultureIgnoreCase))
+            return Platform.Linux;
+
+        throw new InvalidSemVerException(
+            $"Version directory {name} does not match the expected format. " +
+            "Unable to determine the platform that this folder relates to");
+    }
+
+    private static Flavour ParseFlavourFromName(string name)
+        => name.Contains("mono", StringComparison.CurrentCultureIgnoreCase) ? Flavour.Mono : Flavour.Standard;
 }

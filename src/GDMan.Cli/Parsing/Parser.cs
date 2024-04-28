@@ -116,6 +116,11 @@ public class Parser(ConsoleLogger logger)
             returnOptions = op3;
         }
 
+        if (TryInitCommandOptions<UninstallOptions>(arg1, out var op4, ref helpInfo))
+        {
+            returnOptions = op4;
+        }
+
         options = returnOptions;
 
         return options != null;
@@ -169,7 +174,7 @@ public class Parser(ConsoleLogger logger)
         {
             return GetSemVersionTypeInfo(argProp);
         }
-        if (argProp.PropertyType.IsEnum)
+        if (argProp.PropertyType.IsEnum || argProp.PropertyType.IsNullableEnum())
         {
             return GetEnumTypeInfo(argProp);
         }
@@ -202,10 +207,13 @@ public class Parser(ConsoleLogger logger)
         Justification = "Unable to fix properly and seems to work as-is, so suppressing error")]
     private static OptionTypeDefinition GetEnumTypeInfo(PropertyInfo argProp)
     {
-        var allowedValues = Enum.GetValues(argProp.PropertyType).Cast<Enum>().Select(e =>
+        if (!argProp.PropertyType.IsNullableEnum(out var type))
+            type = argProp.PropertyType;
+
+        var allowedValues = Enum.GetValues(type).Cast<Enum>().Select(e =>
         {
             var name = e.ToString();
-            var members = argProp.PropertyType.GetMember(name);
+            var members = type.GetMember(name);
             var description = GetDescription(members.First());
             var aliases = e.GetAttribute<AliasAttribute>()?.Aliases ?? [];
             if (aliases.Any()) name += $", {string.Join(", ", aliases)}";

@@ -27,7 +27,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Standard;
         var expected = "Godot_v4.2.1-stable_linux.arm32";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -41,7 +41,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Mono;
         var expected = "Godot_v4.2.0-stable_mono_linux_arm32";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -55,7 +55,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Standard;
         var expected = "Godot_v3.9.9-alpha_linux.arm64";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -69,7 +69,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Mono;
         var expected = "Godot_v3.5.3-alpha_mono_linux_arm64";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -83,7 +83,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Standard;
         var expected = "Godot_v1.2.3_linux.x86_64";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -97,7 +97,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Mono;
         var expected = "Godot_v1.2.3_mono_linux_x86_64";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -111,7 +111,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Standard;
         var expected = "Godot_v1.2.3_linux.x86_32";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -127,7 +127,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Standard;
         var expected = "Godot_v1.2.3_win32.exe";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -140,7 +140,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Mono;
         var expected = "Godot_v1.2.3_mono_win32";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -153,7 +153,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Standard;
         var expected = "Godot_v1.2.3_win64.exe";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -166,7 +166,7 @@ public class FileSystemServiceTest
         var flavour = Flavour.Mono;
         var expected = "Godot_v1.2.3_mono_win64";
 
-        var result = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        var result = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         result.Should().Be(expected);
     }
@@ -180,7 +180,7 @@ public class FileSystemServiceTest
 
         foreach (var arch in arches)
         {
-            var act = () => GDManDirectory.GenerateVersionName(version, platform, arch, flavour);
+            var act = () => _gdman.GenerateVersionName(version, platform, arch, flavour);
             act.Should().Throw<InvalidOperationException>().WithMessage($"Architecture {arch} not supported on Windows platform");
         }
     }
@@ -196,7 +196,7 @@ public class FileSystemServiceTest
         foreach (var arch in Enum.GetValues(typeof(Architecture)))
         {
             var expected = "Godot_v1.2.3_macos.universal";
-            var result = GDManDirectory.GenerateVersionName(version, platform, (Architecture)arch, flavour);
+            var result = _gdman.GenerateVersionName(version, platform, (Architecture)arch, flavour);
             result.Should().Be(expected);
         }
     }
@@ -209,7 +209,7 @@ public class FileSystemServiceTest
         foreach (var arch in Enum.GetValues(typeof(Architecture)))
         {
             var expected = "Godot_v1.2.3_mono_macos.universal";
-            var result = GDManDirectory.GenerateVersionName(version, platform, (Architecture)arch, flavour);
+            var result = _gdman.GenerateVersionName(version, platform, (Architecture)arch, flavour);
             result.Should().Be(expected);
         }
     }

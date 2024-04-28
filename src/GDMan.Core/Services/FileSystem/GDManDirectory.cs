@@ -17,15 +17,15 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// 
     /// This will generally be false if the install command has not yet been executed.
     /// </summary>
-    public static bool GodotLinkExists => File.Exists(KnownPaths.GodotLinkPath);
+    public bool GodotLinkExists => File.Exists(KnownPaths.GodotLinkPath);
 
     /// <summary>
     /// The version of Godot that the symlink points to (if it exists).
     /// 
     /// This will generally only be null when <see cref="GodotLinkExists"/> is false.
     /// </summary>
-    public static string? GodotLinkTargetVersion => GodotLinkExists
-        ? new DirectoryInfo(new FileInfo(KnownPaths.GodotLinkPath).LinkTarget!).Name
+    public GodotVersionDirectory? GodotCurrentVersion => GodotLinkExists
+        ? new GodotVersionDirectory(Directory.GetParent(new FileInfo(KnownPaths.GodotLinkPath).LinkTarget!)?.FullName!)
         : null;
 
     /// <summary>
@@ -40,7 +40,7 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// updating the <see cref="KnownPaths.GodotLinkPath"/> to point to the specified version.
     /// </summary>
     /// <param name="version"></param>
-    public static void SetActive(GodotVersionDirectory version)
+    public void SetActive(GodotVersionDirectory version)
         => CreateOrUpdateGodotLink(version.ExecutablePath);
 
     /// <summary>
@@ -50,7 +50,7 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// This works by reverse engineering how the Godot versions are named, so 
     /// could break at any time if Godot changes their naming convention.
     /// </summary>
-    public static string GenerateVersionName(SemVersion version, Platform platform, Architecture architecture, Flavour flavour)
+    public string GenerateVersionName(SemVersion version, Platform platform, Architecture architecture, Flavour flavour)
     {
         var sb = new StringBuilder();
         sb.Append("Godot_v");
@@ -79,7 +79,7 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// <param name="architecture"></param>
     /// <param name="flavour"></param>
     /// <returns></returns>
-    public static string GenerateAssetName(Platform platform, Architecture architecture, Flavour flavour)
+    public string GenerateAssetName(Platform platform, Architecture architecture, Flavour flavour)
     {
         var sb = new StringBuilder();
         if (flavour == Flavour.Mono) sb.Append("mono_");
@@ -118,7 +118,7 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// the specified <paramref name="targetPath"/> if it does not yet exist, 
     /// or updates it if it already exists.
     /// </summary>
-    public static void CreateOrUpdateGodotLink(string targetPath)
+    public void CreateOrUpdateGodotLink(string targetPath)
     {
         // Delete the current symlink if it exists
         if (File.Exists(KnownPaths.GodotLinkPath)) File.Delete(KnownPaths.GodotLinkPath);

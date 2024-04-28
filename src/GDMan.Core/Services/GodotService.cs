@@ -29,12 +29,12 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         //      : No, proceed to download and install
         if (versionRange?.IsExactVersion(out var version) ?? false)
         {
-            versionName = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+            versionName = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
             if (_gdman.GDManVersionsDirectory.AlreadyInstalled(versionName, out versionDir))
             {
                 _logger.LogInformation($"Version {versionName} already installed, setting active");
-                GDManDirectory.SetActive(versionDir);
+                _gdman.SetActive(versionDir);
                 return new Result<object>(ResultStatus.OK, null);
             }
         }
@@ -66,12 +66,12 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
 
         version = SemVersion.Parse(release.TagName, SemVersionStyles.Any);
 
-        versionName = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
+        versionName = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
         if (_gdman.GDManVersionsDirectory.AlreadyInstalled(versionName, out versionDir))
         {
             _logger.LogInformation($"Version {versionName} already installed, setting active");
-            GDManDirectory.SetActive(versionDir);
+            _gdman.SetActive(versionDir);
             return new Result<object>(ResultStatus.OK, null);
         }
         // -------------------------------------------------
@@ -84,7 +84,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
 
         versionDir = await _gdman.GDManVersionsDirectory.Install(downloadUrl, versionName);
 
-        GDManDirectory.SetActive(versionDir);
+        _gdman.SetActive(versionDir);
         // -------------------------------------------------
 
         return new Result<object>();
@@ -94,9 +94,14 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
     {
         var versions = await Task.FromResult(_gdman.GDManVersionsDirectory.List());
 
+        foreach (var version in versions)
+        {
+            _logger.LogInformation(version.Name);
+        }
+
         return new Result<IEnumerable<string>>
         {
-            Value = versions,
+            Value = versions.Select(v => v.Name),
             Status = ResultStatus.OK,
         };
     }
@@ -104,8 +109,10 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
     public async Task<Result<string>> GetCurrentVersion()
     {
         var current = await Task.FromResult(
-            GDManDirectory.GodotLinkTargetVersion
+            _gdman.GodotCurrentVersion?.Name
             ?? "No active version");
+
+        _logger.LogInformation(current);
 
         return new Result<string>
         {
@@ -118,7 +125,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         SemVersionRange? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {
-        var assetNameChecks = new List<string> { GDManDirectory.GenerateAssetName(platform, architecture, flavour) };
+        var assetNameChecks = new List<string> { _gdman.GenerateAssetName(platform, architecture, flavour) };
 
         if (flavour != Flavour.Mono) assetNameChecks.Add("^(?!.*mono).*$");
 
@@ -134,5 +141,66 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         _logger.LogInformation($"Found github release for {release.Value?.Assets.First().Name}");
 
         return release;
+    }
+
+    public async Task<Result<object>> UninstallAsync(SemVersionRange? versionRange, Platform? platform, Architecture? architecture, Flavour? flavour, bool force, bool unused)
+    {
+        var remove = new List<GodotVersionDirectory>();
+
+        // find the version(s) that the parameters point to
+        foreach (var godotVersion in _gdman.GDManVersionsDirectory.List())
+        {
+            if (unused && godotVersion != _gdman.GodotCurrentVersion)
+            {
+                remove.Add(godotVersion);
+            }
+            else if (versionRange != null && godotVersion.Version.Satisfies(versionRange))
+            {
+                if (platform.HasValue && platform.Value != godotVersion.Platform) continue;
+                if (architecture.HasValue && architecture.Value != godotVersion.Architecture) continue;
+                if (flavour.HasValue && flavour.Value != godotVersion.Flavour) continue;
+
+                remove.Add(godotVersion);
+            }
+        }
+
+        if (remove.Count == 0)
+            return new Result<object> { Status = ResultStatus.OK };
+
+        _logger.LogInformation("Found the following versions to uninstall");
+
+        remove.ForEach(version => _logger.LogInformation(version.Name));
+
+        // If multiple found and not forced/unused, log that --force is required
+        if (remove.Multiple() && !force && !unused)
+        {
+            return new Result<object>
+            {
+                Status = ResultStatus.ClientError,
+                Messages = ["Multiple versions can only be uninstalled when using the --force or --unused options"]
+            };
+        }
+
+        foreach (var version in remove)
+        {
+            // If the version is the, log that the current version needs to be changed first
+            if (version == _gdman.GodotCurrentVersion)
+            {
+                return new Result<object>
+                {
+                    Status = ResultStatus.ClientError,
+                    Messages = [
+                        $"Cannot uninstall {version.Name} because it is currently active",
+                        "Install / enable another version before uninstalling this"
+                    ]
+                };
+            }
+
+            // remove the version
+            version.Delete();
+        }
+
+
+        return await Task.FromResult(new Result<object> { Status = ResultStatus.OK });
     }
 }
