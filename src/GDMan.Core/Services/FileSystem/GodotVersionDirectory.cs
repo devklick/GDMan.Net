@@ -7,7 +7,7 @@ namespace GDMan.Core.Services.FileSystem;
 
 /// <summary>
 /// Class representing a directory that contains the files 
-/// for a specific version of Godot, e.g. `.gdman/versions/Godot_v1.2.3/`
+/// for a specific version of Godot, e.g. `gdman/versions/Godot_v1.2.3/`
 /// </summary>
 public class GodotVersionDirectory
 {

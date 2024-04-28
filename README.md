@@ -70,7 +70,7 @@ Supported arguments:
   --directory, -d
     The directory where the downloaded version should be installed
     Type: String (Anything)
-    Default: /home/user/.local/share/.gdman/versions
+    Default: /home/user/.local/share/gdman/versions
 
   --verbose, -vl
     Whether or not extensive information should be logged

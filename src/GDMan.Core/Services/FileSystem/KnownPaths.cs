@@ -10,7 +10,7 @@ public class KnownPaths
 
     public KnownPaths()
     {
-        GDMan = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ".gdman");
+        GDMan = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "gdman");
         Bin = Path.Join(GDMan, "bin");
         Versions = EnvVars.VersionsDir.Value ?? Path.Join(GDMan, "versions");
     }

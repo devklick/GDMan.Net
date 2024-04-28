@@ -3,7 +3,7 @@ using GDMan.Core.Infrastructure;
 namespace GDMan.Core.Services.FileSystem;
 
 /// <summary>
-/// Class representing the `.gdman/bin` folder.
+/// Class representing the `gdman/bin` folder.
 /// Encapsulates the logic to be executed against this directory.
 /// </summary>
 public class GDManBinDirectory

@@ -6,7 +6,7 @@ namespace GDMan.Core.Services.FileSystem;
 
 /// <summary>
 /// Class representing the directory where Godot versions are installed. 
-/// E.g. <c>.gdman/versions</c>
+/// E.g. <c>gdman/versions</c>
 /// </summary>
 public class GDManVersionsDirectory(KnownPaths paths, ConsoleLogger logger, HttpClient? client = null)
 {
