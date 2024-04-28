@@ -3,8 +3,8 @@ name: publish
 on:
   push:
     branches:
-      - dev
       - alpha
+      - master
       
 jobs:
   build-and-test:
