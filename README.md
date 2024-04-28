@@ -68,6 +68,7 @@ in the `--version` option with any valid semver value.
 gdman install --version 4.2.2
 ```
 
+> [!NOTE]
 > The shorthand option for `--version` is `-v`
 
 ### Installing mono version
@@ -87,6 +88,7 @@ and to override this with the non-mono version you would override it with the `s
 gdman install --latest --flavour standard
 ```
 
+> [!NOTE]
 > The shorthand option for `--flavour` is `-f`
 
 ### Installing the correct version for your platform
@@ -104,6 +106,7 @@ with the desired platform. Then, whenever you run the `install` command, the val
 environment variable will be used, you wont have to specify the `--platform` option, and
 the app will not attempt to detect the platform you are running on.
 
+> [!NOTE]
 > The shorthand option for `--platform` is `-p`
 
 ### Installing the correct version for your system architecture
@@ -120,6 +123,7 @@ with the desired architecture. Then, whenever you run the `install` command, the
 environment variable will be used, you wont have to specify the `--architecture` option, and
 the app will not attempt to detect the system architecture you are running on.
 
+> [!NOTE]
 > The shorthand option for `--architecture` is `-a`
 
 ## List all installed versions
