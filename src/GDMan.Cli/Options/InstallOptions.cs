@@ -31,7 +31,7 @@ public class InstallOptions : BaseOptions, ICommandOptions
     public Flavour Flavour { get; set; } = FlavourHelper.FromEnvVar() ?? Flavour.Standard;
 
     [Option("directory", "d", "The directory where the downloaded version should be installed", OptionDataType.String)]
-    public string? Directory { get; set; } = FS.Paths.Versions;
+    public string? Directory { get; set; } = KnownPaths.GDManVersionsPath;
 
     public OptionValidation Validate()
     {

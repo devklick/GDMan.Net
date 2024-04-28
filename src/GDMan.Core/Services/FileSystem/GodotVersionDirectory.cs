@@ -26,7 +26,6 @@ public class GodotVersionDirectory
 
     public void ExtractZip()
     {
-
         var options = new ExtractionOptions
         {
             ExtractFullPath = true,
@@ -108,7 +107,7 @@ public class GodotVersionDirectory
     /// for the relevant version of Godot</param>
     /// <exception cref="FileNotFoundException"></exception> 
     /// <returns>The path to the executable file, if found</returns>
-    private string GetExecutablePath(string path)
+    private static string GetExecutablePath(string path)
     {
         var dir = new DirectoryInfo(path);
         var fileName = dir.Name;

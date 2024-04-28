@@ -9,11 +9,11 @@ using Semver;
 
 namespace GDMan.Core.Services;
 
-public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
+public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDirectory gdman)
 {
     private readonly GithubApiService _gh = github;
     private readonly ConsoleLogger _logger = logger;
-    private readonly FS _fs = fs;
+    private readonly GDManDirectory _gdman = gdman;
 
     public async Task<Result<object>> InstallAsync(
         SemVersionRange? versionRange, bool latest, Platform platform,
@@ -29,12 +29,12 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
         //      : No, proceed to download and install
         if (versionRange?.IsExactVersion(out var version) ?? false)
         {
-            versionName = _fs.GenerateVersionName(version, platform, architecture, flavour);
+            versionName = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
 
-            if (_fs.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
+            if (_gdman.GDManVersionsDirectory.AlreadyInstalled(versionName, out versionDir))
             {
                 _logger.LogInformation($"Version {versionName} already installed, setting active");
-                _fs.SetActive(versionDir);
+                GDManDirectory.SetActive(versionDir);
                 return new Result<object>(ResultStatus.OK, null);
             }
         }
@@ -66,12 +66,12 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
 
         version = SemVersion.Parse(release.TagName, SemVersionStyles.Any);
 
-        versionName = _fs.GenerateVersionName(version, platform, architecture, flavour);
+        versionName = GDManDirectory.GenerateVersionName(version, platform, architecture, flavour);
 
-        if (_fs.GodotVersionsDir.AlreadyInstalled(versionName, out versionDir))
+        if (_gdman.GDManVersionsDirectory.AlreadyInstalled(versionName, out versionDir))
         {
             _logger.LogInformation($"Version {versionName} already installed, setting active");
-            _fs.SetActive(versionDir);
+            GDManDirectory.SetActive(versionDir);
             return new Result<object>(ResultStatus.OK, null);
         }
         // -------------------------------------------------
@@ -82,9 +82,9 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
         var downloadUrl = release.Assets.SingleOrDefault()?.BrowserDownloadUrl
             ?? throw new InvalidOperationException("Unable to find exact version asset");
 
-        versionDir = await _fs.GodotVersionsDir.Install(downloadUrl, versionName);
+        versionDir = await _gdman.GDManVersionsDirectory.Install(downloadUrl, versionName);
 
-        _fs.SetActive(versionDir);
+        GDManDirectory.SetActive(versionDir);
         // -------------------------------------------------
 
         return new Result<object>();
@@ -92,7 +92,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
 
     public async Task<Result<IEnumerable<string>>> ListAsync()
     {
-        var versions = await Task.FromResult(_fs.GodotVersionsDir.List());
+        var versions = await Task.FromResult(_gdman.GDManVersionsDirectory.List());
 
         return new Result<IEnumerable<string>>
         {
@@ -104,7 +104,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
     public async Task<Result<string>> GetCurrentVersion()
     {
         var current = await Task.FromResult(
-            _fs.GDManBinDir.GodotLinkTargetVersion
+            GDManDirectory.GodotLinkTargetVersion
             ?? "No active version");
 
         return new Result<string>
@@ -118,7 +118,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, FS fs)
         SemVersionRange? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {
-        var assetNameChecks = new List<string> { _fs.GenerateAssetName(platform, architecture, flavour) };
+        var assetNameChecks = new List<string> { GDManDirectory.GenerateAssetName(platform, architecture, flavour) };
 
         if (flavour != Flavour.Mono) assetNameChecks.Add("^(?!.*mono).*$");
 

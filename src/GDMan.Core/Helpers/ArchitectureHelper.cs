@@ -1,9 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
-using GDMan.Core.Attributes;
 using GDMan.Core.Config;
-using GDMan.Core.Extensions;
 
 using ProcessArchitecture = System.Runtime.InteropServices.Architecture;
 using GDManArchitecture = GDMan.Core.Models.Architecture;

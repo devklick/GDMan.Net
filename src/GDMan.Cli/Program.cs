@@ -7,7 +7,6 @@ using GDMan.Core.Services;
 using GDMan.Core.Services.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Infrastructure;
-using Microsoft.VisualBasic;
 
 namespace GDMan.Cli;
 
@@ -24,14 +23,12 @@ class Program
     static async Task Main(string[] args)
     {
         _serviceProvider = new ServiceCollection()
-            .AddSingleton(new ConsoleLogger(args.Contains("--verbose") || args.Contains("-vl") ? Core.Infrastructure.LogLevel.Trace : Core.Infrastructure.LogLevel.Information))
+            .AddSingleton(new ConsoleLogger(args.Contains("--verbose") || args.Contains("-vl") ? LogLevel.Trace : LogLevel.Information))
             .AddSingleton<GithubApiService>()
             .AddSingleton<GodotService>()
             .AddSingleton<Parser>()
-            .AddSingleton<FS>()
-            .AddSingleton<GDManBinDirectory>()
+            .AddSingleton<GDManDirectory>()
             .AddSingleton<GDManVersionsDirectory>()
-            .AddSingleton<KnownPaths>()
             .BuildServiceProvider();
 
         _logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
