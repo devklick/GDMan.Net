@@ -70,8 +70,8 @@ gdman install --version 4.2.2
 > The shorthand option for `--version` is `-v`
 
 > [!WARNING]
-> GDMan does not support versions version of Godot < 4.
-> This is because the naming convention for it's assets changed considerably.
+> GDMan does not support versions version of Godot < 4 for Linux.
+> This is because published linux assets are considerably different between < 4 and >= 4.
 > Hopefully this naming convention does not change too much in versions 5+ 🤞
 
 ### Installing mono version
