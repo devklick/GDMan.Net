@@ -42,6 +42,9 @@ This will allow you to invoke two commands from your terminal:
 
 To install a version of Godot, you run the `install` command.
 
+> [!NOTE]
+> The shorthand command for `install` is `i`
+
 > [!WARNING]
 > GDMan does not support versions version of Godot < 4.
 > This is because the naming convention for it's assets changed considerably.
@@ -134,6 +137,10 @@ To view all of the versions of Godot that are installed on your system, run the 
 gdman list
 ```
 
+> [!NOTE]
+> The shorthand command for `list` is `ls`
+
+> [!WARNING]
 > This will only list version installed by GDMan
 
 ## List active version
@@ -143,3 +150,6 @@ To see the version of Godot that is currently active, run the `current` command
 ```
 gdman current
 ```
+
+> [!NOTE]
+> The shorthand command for `current` is `c`
