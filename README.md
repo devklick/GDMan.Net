@@ -42,6 +42,11 @@ This will allow you to invoke two commands from your terminal:
 
 To install a version of Godot, you run the `install` command.
 
+> [!WARNING]
+> GDMan does not support versions version of Godot < 4.
+> This is because the naming convention for it's assets changed considerably.
+> Hopefully this naming convention does not change too much in versions 5+ 🤞
+
 ### Installing latest version
 
 In most cases, you probably want to install the latest version of Godot, so you
@@ -52,7 +57,7 @@ gdman install --latest
 ```
 
 > [!NOTE]
-> The shorthard option for `--latest` is `-l`
+> The shorthand option for `--latest` is `-l`
 
 ### Installing an exact version of Godot
 
@@ -63,7 +68,7 @@ in the `--version` option with any valid semver value.
 gdman install --version 4.2.2
 ```
 
-> The shorthard option for `--version` is `-v`
+> The shorthand option for `--version` is `-v`
 
 ### Installing mono version
 
@@ -82,7 +87,7 @@ and to override this with the non-mono version you would override it with the `s
 gdman install --latest --flavour standard
 ```
 
-> The shorthard option for `--flavour` is `-f`
+> The shorthand option for `--flavour` is `-f`
 
 ### Installing the correct version for your platform
 
@@ -94,28 +99,28 @@ In most cases, GDMan will be able to determine what platform you are running on
 gdman install --latest --platform mac
 ```
 
-You can override the default behaviour by setting the `GDMAN_TARGET_PLATFORM` environment variable
+You can override the default behavior by setting the `GDMAN_TARGET_PLATFORM` environment variable
 with the desired platform. Then, whenever you run the `install` command, the value from the
 environment variable will be used, you wont have to specify the `--platform` option, and
 the app will not attempt to detect the platform you are running on.
 
-> The shorthard option for `--platform` is `-p`
+> The shorthand option for `--platform` is `-p`
 
 ### Installing the correct version for your system architecture
 
 In most cases, GDMan will be able to determine what architecture your system uses (e.g x86, x64 etc).
-However, you can use the `--architecture` option to specify exactly which archiecture to use.
+However, you can use the `--architecture` option to specify exactly which architecture to use.
 
 ```
 gdman install --latest --architecture x86
 ```
 
-You can override the default behaviour by setting the `GDMAN_TARGET_ARCHITECTURE` environment variable
+You can override the default behavior by setting the `GDMAN_TARGET_ARCHITECTURE` environment variable
 with the desired architecture. Then, whenever you run the `install` command, the value from the
 environment variable will be used, you wont have to specify the `--architecture` option, and
 the app will not attempt to detect the system architecture you are running on.
 
-> The shorthard option for `--architecture` is `-a`
+> The shorthand option for `--architecture` is `-a`
 
 ## List all installed versions
 
