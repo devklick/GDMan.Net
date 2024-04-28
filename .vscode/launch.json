@@ -19,11 +19,12 @@
       "args": [
         // "current",
         // "list"
-        "install", 
+        // "install", 
+        "i",
         // "--help",
         // "--latest", 
         // "--flavour", "mono"
-        "--version", "v4.2.2-stable"
+        "--version", "4.2.2-stable"
       ]
     },
     {
