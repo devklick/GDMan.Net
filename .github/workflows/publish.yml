@@ -3,7 +3,6 @@ name: publish
 on:
   push:
     branches:
-      - alpha
       - master
       
 jobs:
@@ -64,7 +63,8 @@ jobs:
     # This job will only run on the main branch
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: ${{needs.build-and-test.outputs.next-release-version}}
+    if: ${{needs.build-and-test.outputs.next-release-version &&
+      needs.build-and-test.outputs.branch-name == 'master'}}
     env:
       RELEASE_VERSION: ${{needs.build-and-test.outputs.next-release-version}}
     steps:
@@ -107,4 +107,4 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: npx semantic-release --branches master
