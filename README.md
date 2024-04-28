@@ -13,6 +13,24 @@
 > [!WARNING]
 > This project is WIP
 
+## Motivation
+
+While working with Godot on Linux, I find it a chore having to download new versions,
+extract them, rename files and/or create a symbolic link, and having to update
+desktop launchers & config files that point to a previous version.
+I wanted a way to simply run a command and have all this happen behind the scenes.
+And that's exactly what GDMan does.
+
+## Installing GDMan
+
+- Download the [latest release](https://github.com/devklick/GDMan/releases/latest)
+  for your operating system and extract it to a folder of your choice, e.g. `~/.local/share/gdman/app/`
+- Update your path, adding your new folder to it. In the above example, we'd add `~/.local/share/gdman/app/` to the PATH.
+
+That's it for now. But after we use GDMan to install a version of Godot, we need to then also:
+
+- Update your path, adding
+
 ## Basic CLI
 
 ```
