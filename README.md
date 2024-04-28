@@ -45,11 +45,6 @@ To install a version of Godot, you run the `install` command.
 > [!NOTE]
 > The shorthand command for `install` is `i`
 
-> [!WARNING]
-> GDMan does not support versions version of Godot < 4.
-> This is because the naming convention for it's assets changed considerably.
-> Hopefully this naming convention does not change too much in versions 5+ 🤞
-
 ### Installing latest version
 
 In most cases, you probably want to install the latest version of Godot, so you
@@ -73,6 +68,11 @@ gdman install --version 4.2.2
 
 > [!NOTE]
 > The shorthand option for `--version` is `-v`
+
+> [!WARNING]
+> GDMan does not support versions version of Godot < 4.
+> This is because the naming convention for it's assets changed considerably.
+> Hopefully this naming convention does not change too much in versions 5+ 🤞
 
 ### Installing mono version
 
