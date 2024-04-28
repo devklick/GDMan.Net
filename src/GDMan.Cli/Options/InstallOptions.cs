@@ -27,9 +27,6 @@ public class InstallOptions : BaseOptions
     [Option("flavour", "f", "The \"flavour\" (for lack of a better name) of version to use", OptionDataType.Enum)]
     public Flavour Flavour { get; set; } = FlavourHelper.FromEnvVar() ?? Flavour.Standard;
 
-    [Option("directory", "d", "The directory where the downloaded version should be installed", OptionDataType.String)]
-    public string? Directory { get; set; } = KnownPaths.GDManVersionsPath;
-
     public override OptionValidation Validate()
     {
         if (Version == null && !Latest)
