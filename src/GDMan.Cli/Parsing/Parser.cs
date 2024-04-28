@@ -96,9 +96,9 @@ public class Parser(ConsoleLogger logger)
         return result;
     }
 
-    private static bool TryInitCommandOptions(string? arg1, [NotNullWhen(true)] out ICommandOptions? options, out AppHelpInfo helpInfo)
+    private static bool TryInitCommandOptions(string? arg1, [NotNullWhen(true)] out BaseOptions? options, out AppHelpInfo helpInfo)
     {
-        ICommandOptions? returnOptions = null;
+        BaseOptions? returnOptions = null;
         helpInfo = new AppHelpInfo();
 
         if (TryInitCommandOptions<InstallOptions>(arg1, out var op1, ref helpInfo))
@@ -121,8 +121,8 @@ public class Parser(ConsoleLogger logger)
         return options != null;
     }
 
-    private static bool TryInitCommandOptions<T1>(string? arg1, [NotNullWhen(true)] out ICommandOptions? options, ref AppHelpInfo helpInfo)
-        where T1 : ICommandOptions, new()
+    private static bool TryInitCommandOptions<T1>(string? arg1, [NotNullWhen(true)] out BaseOptions? options, ref AppHelpInfo helpInfo)
+        where T1 : BaseOptions, new()
     {
         var attr = typeof(T1).GetCustomAttribute<CommandAttribute>()
             ?? throw new InvalidOperationException($"Type does not appear to represent a known command. {nameof(CommandAttribute)} expected");
@@ -136,7 +136,7 @@ public class Parser(ConsoleLogger logger)
         return options != null;
     }
 
-    private static CommandHelpInfo GetCommandHelpInfo(ICommandOptions instance, IEnumerable<(PropertyInfo argProp, OptionAttribute attr)> argProps)
+    private static CommandHelpInfo GetCommandHelpInfo(BaseOptions instance, IEnumerable<(PropertyInfo argProp, OptionAttribute attr)> argProps)
     {
         var helpInfo = new CommandHelpInfo();
         foreach (var (argProp, attr) in argProps)
@@ -157,7 +157,7 @@ public class Parser(ConsoleLogger logger)
         return helpInfo;
     }
 
-    private static string? GetDefault(ICommandOptions instance, PropertyInfo prop)
+    private static string? GetDefault(BaseOptions instance, PropertyInfo prop)
         => prop.GetValue(instance)?.ToString();
 
     private static string? GetDescription(MemberInfo prop)
@@ -215,7 +215,7 @@ public class Parser(ConsoleLogger logger)
     }
 
     private static IEnumerable<(PropertyInfo argProp, OptionAttribute attr)> GetOptionProps(
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)] Type type)
     {
         var flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty;
 

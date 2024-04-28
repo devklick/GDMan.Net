@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 using GDMan.Cli.Attributes;
 using GDMan.Core.Helpers;
 using GDMan.Core.Models;
@@ -10,8 +8,7 @@ using Semver;
 namespace GDMan.Cli.Options;
 
 [Command("install", "i", "Installs the specified version of Godot")]
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)]
-public class InstallOptions : BaseOptions, ICommandOptions
+public class InstallOptions : BaseOptions
 {
     [Option("latest", "l", "Whether or not the latest version should be fetched. "
         + "If used in conjunction with the Version argument and multiple matching "
@@ -33,7 +30,7 @@ public class InstallOptions : BaseOptions, ICommandOptions
     [Option("directory", "d", "The directory where the downloaded version should be installed", OptionDataType.String)]
     public string? Directory { get; set; } = KnownPaths.GDManVersionsPath;
 
-    public OptionValidation Validate()
+    public override OptionValidation Validate()
     {
         if (Version == null && !Latest)
         {
