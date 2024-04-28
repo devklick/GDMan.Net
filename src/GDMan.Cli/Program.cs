@@ -59,7 +59,7 @@ class Program
         await RunAsync(cliArgs.Options);
     }
 
-    private static Task RunAsync(ICommandOptions command) => command switch
+    private static Task RunAsync(BaseOptions command) => command switch
     {
         InstallOptions i => RunInstallAsync(i),
         ListOptions i => RunListAsync(i),

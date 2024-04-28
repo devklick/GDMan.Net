@@ -5,7 +5,7 @@ namespace GDMan.Cli.Parsing;
 
 public class ParseResult
 {
-    public ICommandOptions? Options { get; set; }
+    public BaseOptions? Options { get; set; }
     public bool RequiresHelp { get; set; }
     public CliHelpInfo? HelpInfo { get; set; }
     public string HelpInfoString => HelpInfo?.ToString() ?? throw new NullReferenceException("Expected HelpInfo to have a value but found null");
