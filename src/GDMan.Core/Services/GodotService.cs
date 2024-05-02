@@ -5,7 +5,7 @@ using GDMan.Core.Models.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Services.Github;
 
-using Semver;
+using SemanticVersioning;
 
 namespace GDMan.Core.Services;
 
@@ -16,7 +16,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
     private readonly GDManDirectory _gdman = gdman;
 
     public async Task<Result<object>> InstallAsync(
-        SemVersionRange? versionRange, bool latest, Platform platform,
+        SemanticVersioning.Range? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {
         string versionName;
@@ -64,7 +64,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         var release = ghResult.Value
             ?? throw new InvalidOperationException("Unable to find release");
 
-        version = SemVersion.Parse(release.TagName, SemVersionStyles.Any);
+        version = SemanticVersioning.Version.Parse(release.TagName);
 
         versionName = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
@@ -122,7 +122,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
     }
 
     private async Task<Result<Release>> FindDownloadAssetAsync(
-        SemVersionRange? versionRange, bool latest, Platform platform,
+        SemanticVersioning.Range? versionRange, bool latest, Platform platform,
         Architecture architecture, Flavour flavour)
     {
         var assetNameChecks = new List<string> { _gdman.GenerateAssetName(platform, architecture, flavour) };
@@ -143,7 +143,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         return release;
     }
 
-    public async Task<Result<object>> UninstallAsync(SemVersionRange? versionRange, Platform? platform, Architecture? architecture, Flavour? flavour, bool force, bool unused)
+    public async Task<Result<object>> UninstallAsync(SemanticVersioning.Range? versionRange, Platform? platform, Architecture? architecture, Flavour? flavour, bool force, bool unused)
     {
         var remove = new List<GodotVersionDirectory>();
 
@@ -154,7 +154,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
             {
                 remove.Add(godotVersion);
             }
-            else if (versionRange != null && godotVersion.Version.Satisfies(versionRange))
+            else if (versionRange != null && versionRange.IsSatisfied(godotVersion.Version))
             {
                 if (platform.HasValue && platform.Value != godotVersion.Platform) continue;
                 if (architecture.HasValue && architecture.Value != godotVersion.Architecture) continue;

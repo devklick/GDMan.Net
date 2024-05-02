@@ -1,6 +1,6 @@
 using System.Text;
 
-using Semver;
+using SemanticVersioning;
 
 using GDMan.Core.Models;
 using GDMan.Core.Infrastructure;
@@ -50,7 +50,7 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// This works by reverse engineering how the Godot versions are named, so 
     /// could break at any time if Godot changes their naming convention.
     /// </summary>
-    public string GenerateVersionName(SemVersion version, Platform platform, Architecture architecture, Flavour flavour)
+    public string GenerateVersionName(SemanticVersioning.Version version, Platform platform, Architecture architecture, Flavour flavour)
     {
         var sb = new StringBuilder();
         sb.Append("Godot_v");

@@ -5,7 +5,7 @@ using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
 
-using Semver;
+using SemanticVersioning;
 
 namespace GDMan.Core.Services.Github;
 
@@ -46,7 +46,7 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
         };
     }
 
-    public async Task<Result<Release>> FindReleaseWithAsset(string owner, string repo, SemVersionRange? versionRange, IEnumerable<string> assetNameLike, bool latest)
+    public async Task<Result<Release>> FindReleaseWithAsset(string owner, string repo, SemanticVersioning.Range? versionRange, IEnumerable<string> assetNameLike, bool latest)
     {
         var candidates = await FindReleases(owner, repo, versionRange, latest);
 
@@ -90,7 +90,7 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
         };
     }
 
-    private async Task<Result<IEnumerable<Release>>> FindReleases(string owner, string repo, SemVersionRange? versionRange, bool latest)
+    private async Task<Result<IEnumerable<Release>>> FindReleases(string owner, string repo, SemanticVersioning.Range? versionRange, bool latest)
     {
         var candidatesResult = await GetReleasesAsync(owner, repo);
 
@@ -99,7 +99,7 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
         var candidates = candidatesResult.Value!;
         if (versionRange != null)
         {
-            candidates = candidates.Where(r => SemVersion.Parse(r.TagName, SemVersionStyles.Any).Satisfies(versionRange));
+            candidates = candidates.Where(r => versionRange.IsSatisfied(SemanticVersioning.Version.Parse(r.TagName)));
         }
 
         if (!candidates.Any())

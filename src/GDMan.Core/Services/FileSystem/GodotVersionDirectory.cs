@@ -3,7 +3,7 @@ using System.Runtime.Versioning;
 using GDMan.Core.Exceptions;
 using GDMan.Core.Models;
 
-using Semver;
+using SemanticVersioning;
 
 using SharpCompress.Common;
 using SharpCompress.Readers;
@@ -20,7 +20,7 @@ public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
     public string Name { get; }
     public string ExecutablePath => GetExecutablePath(Path);
     public string ZipPath => Directory.GetFiles(Path, "*.zip").Single();
-    public SemVersion Version { get; }
+    public SemanticVersioning.Version Version { get; }
     public Platform Platform { get; }
     public Architecture Architecture { get; }
     public Flavour Flavour { get; }
@@ -159,7 +159,7 @@ public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
     public bool Equals(GodotVersionDirectory? other)
         => other != null && other.Path == Path;
 
-    private static SemVersion ParseSemverFromName(string name)
+    private static SemanticVersioning.Version ParseSemverFromName(string name)
     {
         // The semver string is between the first and second underscores
         var startPos = name.IndexOf('_');
@@ -176,7 +176,7 @@ public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
         // We -2 to exclude the trailing underscore, and because we shifted the start position
         var semverString = name.Substring(startPos + 2, endPos - startPos - 2);
 
-        return SemVersion.Parse(semverString, SemVersionStyles.Any);
+        return SemanticVersioning.Version.Parse(semverString);
     }
 
     private static Architecture ParseArchitectureFromName(string name, Platform platform)

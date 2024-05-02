@@ -4,7 +4,7 @@ using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Services.FileSystem;
 
-using Semver;
+using SemanticVersioning;
 
 namespace GDMan.Core.Test.Services;
 
@@ -21,7 +21,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_Arm32_Standard()
     {
-        var version = SemVersion.Parse("4.2.1-stable", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("4.2.1-stable");
         var platform = Platform.Linux;
         var architecture = Architecture.Arm32;
         var flavour = Flavour.Standard;
@@ -35,7 +35,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_Arm32_Mono()
     {
-        var version = SemVersion.Parse("4.2-stable", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("4.2-stable");
         var platform = Platform.Linux;
         var architecture = Architecture.Arm32;
         var flavour = Flavour.Mono;
@@ -49,7 +49,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_Arm64_Standard()
     {
-        var version = SemVersion.Parse("3.9.9-alpha", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("3.9.9-alpha");
         var platform = Platform.Linux;
         var architecture = Architecture.Arm64;
         var flavour = Flavour.Standard;
@@ -63,7 +63,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_Arm64_Mono()
     {
-        var version = SemVersion.Parse("3.5.3-alpha", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("3.5.3-alpha");
         var platform = Platform.Linux;
         var architecture = Architecture.Arm64;
         var flavour = Flavour.Mono;
@@ -77,7 +77,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_X64_Standard()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Linux;
         var architecture = Architecture.X64;
         var flavour = Flavour.Standard;
@@ -91,7 +91,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_X64_Mono()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Linux;
         var architecture = Architecture.X64;
         var flavour = Flavour.Mono;
@@ -105,7 +105,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_X86_Standard()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Linux;
         var architecture = Architecture.X86;
         var flavour = Flavour.Standard;
@@ -121,7 +121,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Windows_X86_Standard()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Windows;
         var architecture = Architecture.X86;
         var flavour = Flavour.Standard;
@@ -134,7 +134,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Windows_X86_Mono()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Windows;
         var architecture = Architecture.X86;
         var flavour = Flavour.Mono;
@@ -147,7 +147,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Windows_X64_Standard()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Windows;
         var architecture = Architecture.X64;
         var flavour = Flavour.Standard;
@@ -160,7 +160,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Windows_X64_Mono()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Windows;
         var architecture = Architecture.X64;
         var flavour = Flavour.Mono;
@@ -174,7 +174,7 @@ public class FileSystemServiceTest
     public void GenerateName_Windows_Arm_Throws()
     {
         var arches = new List<Architecture>([Architecture.Arm32, Architecture.Arm64]);
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.Windows;
         var flavour = Flavour.Mono;
 
@@ -190,7 +190,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_MacOS_Standard_ArchIgnored()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.MacOS;
         var flavour = Flavour.Standard;
         foreach (var arch in Enum.GetValues(typeof(Architecture)))
@@ -203,7 +203,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_MacOS_Mono_ArchIgnored()
     {
-        var version = SemVersion.Parse("1.2.3", SemVersionStyles.Any);
+        var version = SemanticVersioning.Version.Parse("1.2.3");
         var platform = Platform.MacOS;
         var flavour = Flavour.Mono;
         foreach (var arch in Enum.GetValues(typeof(Architecture)))

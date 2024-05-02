@@ -1,7 +1,7 @@
 using GDMan.Cli.Attributes;
 using GDMan.Core.Models;
 
-using Semver;
+using SemanticVersioning;
 
 namespace GDMan.Cli.Options;
 
@@ -9,7 +9,7 @@ namespace GDMan.Cli.Options;
 public class UninstallOptions : BaseOptions
 {
     [Option("version", "v", "The version to use, e.g. 1.2.3. Any valid semver range is supported", OptionDataType.String)]
-    public SemVersionRange? Version { get; set; }
+    public SemanticVersioning.Range? Version { get; set; }
 
     [Option("platform", "p", "The platform or operating system to find a version for", OptionDataType.Enum)]
     public Platform? Platform { get; set; }

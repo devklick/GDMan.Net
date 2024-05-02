@@ -153,3 +153,27 @@ gdman current
 
 > [!NOTE]
 > The shorthand command for `current` is `c`
+
+## Uninstalling versions of Godot
+
+You can uninstall versions by using the `uninstall` command.
+
+```
+gdman uninstall
+```
+
+> [!NOTE]
+> The shorthand command for `uninstall` is `u`
+
+### Uninstall unused versions
+
+In most cases, you probably dont want to keep old versions lying around, and just
+want to remove all versions except the one that is currently active. To do so,
+you can specify the `--unused` property.
+
+```
+gdman uninstall --unused
+```
+
+> [!NOTE]
+> The shorthand command for `--unused` is `-u`

@@ -4,7 +4,7 @@ using GDMan.Cli.Options;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 
-using Semver;
+using SemanticVersioning;
 
 namespace GDMan.Cli.Attributes;
 
@@ -42,9 +42,9 @@ public class OptionAttribute : Attribute
 
     private static OptionValidation ValidateString(PropertyInfo propertyInfo, object? value)
     {
-        if (propertyInfo.PropertyType == typeof(SemVersionRange))
+        if (propertyInfo.PropertyType == typeof(SemanticVersioning.Range))
         {
-            return SemVersionRange.TryParse(value?.ToString(), out var semVer)
+            return SemanticVersioning.Range.TryParse(value?.ToString(), out var semVer)
                 ? OptionValidation.Success(semVer)
                 : OptionValidation.Failed();
         }

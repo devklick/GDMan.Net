@@ -9,7 +9,7 @@ using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 using GDMan.Core.Infrastructure;
 
-using Semver;
+using SemanticVersioning;
 
 namespace GDMan.Cli.Parsing;
 
@@ -170,7 +170,7 @@ public class Parser(ConsoleLogger logger)
 
     private static OptionTypeDefinition GetTypeInfo(PropertyInfo argProp, OptionAttribute attr)
     {
-        if (argProp.PropertyType == typeof(SemVersionRange))
+        if (argProp.PropertyType == typeof(SemanticVersioning.Range))
         {
             return GetSemVersionTypeInfo(argProp);
         }

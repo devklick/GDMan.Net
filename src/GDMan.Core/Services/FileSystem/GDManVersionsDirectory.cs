@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 using GDMan.Core.Infrastructure;
 
-using Semver;
+using SemanticVersioning;
 
 namespace GDMan.Core.Services.FileSystem;
 
