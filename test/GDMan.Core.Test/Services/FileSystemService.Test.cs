@@ -33,7 +33,7 @@ public class FileSystemServiceTest
     [Fact]
     public void GenerateName_Linux_Arm32_Mono()
     {
-        var version = SemanticVersioning.Version.Parse("4.2-stable");
+        var version = SemanticVersioning.Version.Parse("4.2.0-stable");
         var platform = Platform.Linux;
         var architecture = Architecture.Arm32;
         var flavour = Flavour.Mono;
