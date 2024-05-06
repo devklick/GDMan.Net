@@ -1,11 +1,10 @@
 using GDMan.Core.Extensions;
+using GDMan.Core.Helpers;
 using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Services.Github;
-
-using SemanticVersioning;
 
 namespace GDMan.Core.Services;
 
@@ -27,7 +26,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         // If exact version requested, check if that version is installed
         //      ? Yes, Update symlink to point to this version - done
         //      : No, proceed to download and install
-        if (versionRange?.IsExactVersion(out var version) ?? false)
+        if (versionRange != null && SemVerHelper.TryParseVersion(versionRange.ToString(), out var version))
         {
             versionName = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
@@ -64,7 +63,10 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         var release = ghResult.Value
             ?? throw new InvalidOperationException("Unable to find release");
 
-        version = SemanticVersioning.Version.Parse(release.TagName);
+        if (!SemVerHelper.TryParseVersion(release.TagName, out version))
+        {
+            throw new InvalidOperationException($"Release {release.TagName} has an invalid version number");
+        }
 
         versionName = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
@@ -129,13 +131,22 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
 
         if (flavour != Flavour.Mono) assetNameChecks.Add("^(?!.*mono).*$");
 
-        var release = await _gh.FindReleaseWithAsset("godotengine", "godot", versionRange, assetNameChecks, latest);
+        var release = await _gh.FindReleaseWithAssets("godotengine", "godot", versionRange, assetNameChecks, latest);
 
         if (release.Status != ResultStatus.OK)
         {
             throw new Exception("Unable to search github for Godot releases. "
             + "Make sure you can access https://github.com/godotengine/godot/releases/"
             + Environment.NewLine + string.Join(Environment.NewLine, release.Messages));
+        }
+
+        if (release.Value?.Assets.Multiple() ?? false)
+        {
+            return new Result<Release>
+            {
+                Status = ResultStatus.ClientError,
+                Messages = [$"Found release {release.Value.Name} containing multiple assets matching the specified criteria"]
+            };
         }
 
         _logger.LogInformation($"Found github release for {release.Value?.Assets.First().Name}");
@@ -154,7 +165,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
             {
                 remove.Add(godotVersion);
             }
-            else if (versionRange != null && versionRange.IsSatisfied(godotVersion.Version))
+            else if (versionRange != null && versionRange.IsSatisfied(godotVersion.VersionWithoutStablePrerelease))
             {
                 if (platform.HasValue && platform.Value != godotVersion.Platform) continue;
                 if (architecture.HasValue && architecture.Value != godotVersion.Architecture) continue;

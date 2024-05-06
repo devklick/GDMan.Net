@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 
 using GDMan.Core.Extensions;
+using GDMan.Core.Helpers;
 using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
@@ -46,9 +47,9 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
         };
     }
 
-    public async Task<Result<Release>> FindReleaseWithAsset(string owner, string repo, SemanticVersioning.Range? versionRange, IEnumerable<string> assetNameLike, bool latest)
+    public async Task<Result<Release>> FindReleaseWithAssets(string owner, string repo, SemanticVersioning.Range? versionRange, IEnumerable<string> assetNameLike, bool latest)
     {
-        var candidates = await FindReleases(owner, repo, versionRange, latest);
+        var candidates = await FindReleases(owner, repo, versionRange);
 
         if (candidates.Status != ResultStatus.OK)
         {
@@ -72,14 +73,14 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
             };
         }
 
-        if (assets.Multiple())
-        {
-            return new Result<Release>
-            {
-                Status = ResultStatus.ClientError,
-                Messages = new List<string>([$"Found version {release.TagName} but multiple downloads match the specified criteria"]).Concat(assets.Select(a => a.Name)).ToList()
-            };
-        }
+        // if (assets.Multiple())
+        // {
+        //     return new Result<Release>
+        //     {
+        //         Status = ResultStatus.ClientError,
+        //         Messages = new List<string>([$"Found version {release.TagName} but multiple downloads match the specified criteria"]).Concat(assets.Select(a => a.Name)).ToList()
+        //     };
+        // }
 
         release.Assets = [assets.First()];
 
@@ -90,16 +91,17 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
         };
     }
 
-    private async Task<Result<IEnumerable<Release>>> FindReleases(string owner, string repo, SemanticVersioning.Range? versionRange, bool latest)
+    private async Task<Result<IEnumerable<Release>>> FindReleases(string owner, string repo, SemanticVersioning.Range? versionRange)
     {
         var candidatesResult = await GetReleasesAsync(owner, repo);
 
         if (candidatesResult.Status != ResultStatus.OK) return candidatesResult;
 
         var candidates = candidatesResult.Value!;
+
         if (versionRange != null)
         {
-            candidates = candidates.Where(r => versionRange.IsSatisfied(SemanticVersioning.Version.Parse(r.TagName)));
+            candidates = candidates.Where(c => SemVerHelper.TryParseVersion(c.TagName, out var version) && versionRange.IsSatisfied(version, true));
         }
 
         if (!candidates.Any())
@@ -108,15 +110,6 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
             {
                 Status = ResultStatus.ClientError,
                 Messages = ["Unable to find matching version"]
-            };
-        }
-
-        if (candidates.Multiple() && !latest)
-        {
-            return new Result<IEnumerable<Release>>
-            {
-                Status = ResultStatus.ClientError,
-                Messages = new List<string>([$"Found multiple versions match the specified criteria"]).Concat(candidates.Select(a => a.TagName)).ToList()
             };
         }
 

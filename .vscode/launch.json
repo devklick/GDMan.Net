@@ -19,13 +19,13 @@
       "args": [
         // "current",
         // "list"
-        "install", 
+        // "install", 
         // "i",
         // "--help",
         // "--latest", 
-        // "--flavour", "mono"
-        "--version", "> 4",
-        // "uninstall", "--version", "< 4.2.2"
+        // "--flavour", "mono",
+        // "--version", "4.2.x",
+        "uninstall", "--version", "< 4.2.2"
         // "install", "--version", "4.1.3-stable", "-a", "arm32"
       ]
     },

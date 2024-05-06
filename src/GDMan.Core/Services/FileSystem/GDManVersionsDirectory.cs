@@ -21,6 +21,8 @@ public class GDManVersionsDirectory(ConsoleLogger logger, HttpClient? client = n
     {
         var dir = new GodotVersionDirectory(System.IO.Path.Join(Path, destinationFolderName));
 
+        _logger.LogInformation($"Downloading {url} to {dir.Name}");
+
         await Download(url, dir);
 
         _logger.LogInformation($"Extracting contents to {dir.Path}");
@@ -58,7 +60,7 @@ public class GDManVersionsDirectory(ConsoleLogger logger, HttpClient? client = n
 
     private async Task<string> Download(string url, GodotVersionDirectory targetDir)
     {
-        _logger.LogInformation($"Downloading {url} to {targetDir.Name}");
+
         var zip = System.IO.Path.Join(targetDir.Path, $"{targetDir.Name}.zip");
         var response = await _client.GetAsync(url);
 

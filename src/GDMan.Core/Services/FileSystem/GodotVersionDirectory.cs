@@ -1,6 +1,7 @@
 using System.Runtime.Versioning;
 
 using GDMan.Core.Exceptions;
+using GDMan.Core.Extensions;
 using GDMan.Core.Models;
 
 using SemanticVersioning;
@@ -21,6 +22,7 @@ public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
     public string ExecutablePath => GetExecutablePath(Path);
     public string ZipPath => Directory.GetFiles(Path, "*.zip").Single();
     public SemanticVersioning.Version Version { get; }
+    public SemanticVersioning.Version VersionWithoutStablePrerelease { get; }
     public Platform Platform { get; }
     public Architecture Architecture { get; }
     public Flavour Flavour { get; }
@@ -32,6 +34,7 @@ public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
         Name = System.IO.Path.GetFileName(path);
         Directory.CreateDirectory(path);
         Version = ParseSemverFromName(Name);
+        VersionWithoutStablePrerelease = new(Version.ToString().TrimEnd("-stable"));
         Flavour = ParseFlavourFromName(Name);
         Platform = ParsePlatformFromName(Name);
         Architecture = ParseArchitectureFromName(Name, Platform);
