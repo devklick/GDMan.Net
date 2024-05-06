@@ -16,7 +16,7 @@ public partial class SemVerHelper
     /// See <see cref="https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string"/>
     /// The difference is that minor and patch versions are optional in this regex.
     /// </summary>
-    [GeneratedRegex(@"^(?<major>0|[1-9]\d*)(\.(?<minor>0|[1-9]\d*))?(\.(?<patch>0|[1-9]\d*))?(?:-(?<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$")]
+    [GeneratedRegex(@"^(?<major>0|[1-9]\d*)(\.(?<minor>0|[1-9]\d*))?(\.(?<patch>0|[1-9]\d*))?(?:-(?<pre>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?<meta>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$")]
     private static partial Regex SemverRegex();
 
     public static bool TryParseVersion(string text, [NotNullWhen(true)] out SemanticVersioning.Version? version)
@@ -25,11 +25,17 @@ public partial class SemVerHelper
 
         if (match.Success)
         {
+            // major is required
             var maj = match.Groups["major"].Value.IntOrNull();
+            // minor is optional and substituted with 0
+            // e.g. version 1 = 1.0.0
             var min = match.Groups["minor"].Value.IntOrNull() ?? 0;
+            // minor is optional and substituted with 0
+            // e.g. version 1.1 = 1.1.0
             var patch = match.Groups["patch"].Value.IntOrNull() ?? 0;
-            var pre = match.Groups["prerelease"].Value.NullIfEmpty();
-            var meta = match.Groups["buildmetadata"].Value.NullIfEmpty();
+            var pre = match.Groups["pre"].Value.NullIfEmpty();
+            var meta = match.Groups["meta"].Value.NullIfEmpty();
+
             var str = string.Join('.', new List<int?>([maj, min, patch]).Where(x => x != null));
             if (pre != null) str += '-' + pre;
             if (meta != null) str += '+' + meta;

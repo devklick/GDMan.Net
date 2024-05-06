@@ -15,15 +15,53 @@ namespace GDMan.Core.Services.FileSystem;
 /// </summary>
 public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
 {
+    /// <summary>
+    /// The path to this directory
+    /// </summary>
     public string Path { get; }
+    /// <summary>
+    /// The name of this directory. 
+    /// This will generally be the name of the Github release asset
+    /// </summary>
     public string Name { get; }
+    /// <summary>
+    /// The path to the executable that runs this version of Godot
+    /// </summary>
     public string ExecutablePath => GetExecutablePath(Path);
+    /// <summary>
+    /// The path to the zip file expected to contain the contents of this version. 
+    /// This file will only exist temporarily while installing a new version of Godot.
+    /// </summary>
     public string ZipPath => Directory.GetFiles(Path, "*.zip").Single();
+    /// <summary>
+    /// The version of Godot that this directory contains.
+    /// This will match the Github release tag.
+    /// </summary>
     public SemanticVersioning.Version Version { get; }
+    /// <summary>
+    /// The version with the `-stable` suffix removed. 
+    /// 
+    /// Godot versions do not strictly follow the semver spec, and include `-stable`
+    /// at the end which indicates a pre-release version, however these are not pre-releases.
+    /// Having the pre-release indicator causes problems with comparing versions, 
+    /// so this property exists for comparing versions without the unnecessary info.
+    /// </summary>
     public SemanticVersioning.Version VersionWithoutStablePrerelease { get; }
+    /// <summary>
+    /// The OS platform that this version of Godot targets
+    /// </summary>
     public Platform Platform { get; }
+    /// <summary>
+    /// The OS architecture that this version of Godot targets
+    /// </summary>
     public Architecture Architecture { get; }
+    /// <summary>
+    /// The flavour of Godot that this version targets
+    /// </summary>
     public Flavour Flavour { get; }
+    /// <summary>
+    /// Whether or not this Godot version directory and it's contents appear to be valid.
+    /// </summary>
     public bool IsValid { get; } = true;
 
     public GodotVersionDirectory(string path)
@@ -38,6 +76,10 @@ public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
         Architecture = ParseArchitectureFromName(Name, Platform);
     }
 
+    /// <summary>
+    /// Extracts the <see cref="ZipPath"/> outputting it's contents 
+    /// into <see cref="Path"/> and deleting the zip after.
+    /// </summary>
     public void ExtractZip()
     {
         var options = new ExtractionOptions
@@ -63,6 +105,9 @@ public class GodotVersionDirectory : IEquatable<GodotVersionDirectory>
         File.Delete(ZipPath);
     }
 
+    /// <summary>
+    /// Deletes this version of Godot
+    /// </summary>
     public void Delete()
         => Directory.Delete(Path, true);
 

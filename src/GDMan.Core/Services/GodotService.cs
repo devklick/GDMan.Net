@@ -208,6 +208,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
             }
 
             // remove the version
+            _logger.LogInformation($"Removing {version.Name}");
             version.Delete();
         }
 

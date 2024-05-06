@@ -70,15 +70,6 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
             };
         }
 
-        // if (assets.Multiple())
-        // {
-        //     return new Result<Release>
-        //     {
-        //         Status = ResultStatus.ClientError,
-        //         Messages = new List<string>([$"Found version {release.TagName} but multiple downloads match the specified criteria"]).Concat(assets.Select(a => a.Name)).ToList()
-        //     };
-        // }
-
         release.Assets = [assets.First()];
 
         return new Result<Release>
