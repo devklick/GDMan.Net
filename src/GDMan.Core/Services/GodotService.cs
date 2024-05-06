@@ -161,7 +161,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         // find the version(s) that the parameters point to
         foreach (var godotVersion in _gdman.GDManVersionsDirectory.List())
         {
-            if (unused && godotVersion != _gdman.GodotCurrentVersion)
+            if (unused && !godotVersion.Equals(_gdman.GodotCurrentVersion))
             {
                 remove.Add(godotVersion);
             }
@@ -195,7 +195,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         foreach (var version in remove)
         {
             // If the version is the, log that the current version needs to be changed first
-            if (version == _gdman.GodotCurrentVersion)
+            if (version.Equals(_gdman.GodotCurrentVersion))
             {
                 return new Result<object>
                 {
