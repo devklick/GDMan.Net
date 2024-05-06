@@ -1,8 +1,6 @@
 using GDMan.Cli.Attributes;
 using GDMan.Core.Models;
 
-using SemanticVersioning;
-
 namespace GDMan.Cli.Options;
 
 [Command("uninstall", "u", "Uninstalls the specified version(s) of Godot")]

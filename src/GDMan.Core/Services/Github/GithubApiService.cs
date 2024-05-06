@@ -1,12 +1,9 @@
 using System.Text.RegularExpressions;
 
-using GDMan.Core.Extensions;
 using GDMan.Core.Helpers;
 using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Models.Github;
-
-using SemanticVersioning;
 
 namespace GDMan.Core.Services.Github;
 

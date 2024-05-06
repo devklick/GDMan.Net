@@ -2,8 +2,6 @@ using GDMan.Cli.Attributes;
 using GDMan.Core.Helpers;
 using GDMan.Core.Models;
 
-using SemanticVersioning;
-
 namespace GDMan.Cli.Options;
 
 [Command("install", "i", "Installs the specified version of Godot")]

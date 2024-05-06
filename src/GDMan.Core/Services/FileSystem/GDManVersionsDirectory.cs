@@ -2,8 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 
 using GDMan.Core.Infrastructure;
 
-using SemanticVersioning;
-
 namespace GDMan.Core.Services.FileSystem;
 
 /// <summary>

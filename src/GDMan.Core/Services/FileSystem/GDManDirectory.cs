@@ -1,7 +1,5 @@
 using System.Text;
 
-using SemanticVersioning;
-
 using GDMan.Core.Models;
 using GDMan.Core.Infrastructure;
 

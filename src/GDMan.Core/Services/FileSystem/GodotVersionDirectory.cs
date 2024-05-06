@@ -4,8 +4,6 @@ using GDMan.Core.Exceptions;
 using GDMan.Core.Extensions;
 using GDMan.Core.Models;
 
-using SemanticVersioning;
-
 using SharpCompress.Common;
 using SharpCompress.Readers;
 

@@ -75,11 +75,18 @@ class Program
         _ => throw new InvalidOperationException()
     };
 
-    private static async Task RunUninstallAsync(UninstallOptions i)
+    private static async Task RunUninstallAsync(UninstallOptions command)
     {
         _logger.LogTrace("Processing uninstall command");
 
-        await _godot.UninstallAsync(i.Version, i.Platform, i.Architecture, i.Flavour, i.Force, i.Unused);
+        await _godot.UninstallAsync(
+            command.Version,
+            command.Platform,
+            command.Architecture,
+            command.Flavour,
+            command.Force,
+            command.Unused
+        );
 
         _logger.LogTrace("Done");
     }

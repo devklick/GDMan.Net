@@ -9,8 +9,6 @@ using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 using GDMan.Core.Infrastructure;
 
-using SemanticVersioning;
-
 namespace GDMan.Cli.Parsing;
 
 public class Parser(ConsoleLogger logger)
@@ -101,25 +99,17 @@ public class Parser(ConsoleLogger logger)
         BaseOptions? returnOptions = null;
         helpInfo = new AppHelpInfo();
 
-        if (TryInitCommandOptions<InstallOptions>(arg1, out var op1, ref helpInfo))
-        {
-            returnOptions = op1;
-        }
+        if (TryInitCommandOptions<InstallOptions>(arg1, out var install, ref helpInfo))
+            returnOptions = install;
 
-        if (TryInitCommandOptions<ListOptions>(arg1, out var op2, ref helpInfo))
-        {
-            returnOptions = op2;
-        }
+        if (TryInitCommandOptions<ListOptions>(arg1, out var list, ref helpInfo))
+            returnOptions = list;
 
-        if (TryInitCommandOptions<CurrentOptions>(arg1, out var op3, ref helpInfo))
-        {
-            returnOptions = op3;
-        }
+        if (TryInitCommandOptions<CurrentOptions>(arg1, out var current, ref helpInfo))
+            returnOptions = current;
 
-        if (TryInitCommandOptions<UninstallOptions>(arg1, out var op4, ref helpInfo))
-        {
-            returnOptions = op4;
-        }
+        if (TryInitCommandOptions<UninstallOptions>(arg1, out var uninstall, ref helpInfo))
+            returnOptions = uninstall;
 
         options = returnOptions;
 
@@ -143,7 +133,11 @@ public class Parser(ConsoleLogger logger)
 
     private static CommandHelpInfo GetCommandHelpInfo(BaseOptions instance, IEnumerable<(PropertyInfo argProp, OptionAttribute attr)> argProps)
     {
-        var helpInfo = new CommandHelpInfo();
+        var commandAttr = instance.GetType().GetCustomAttribute<CommandAttribute>()
+            ?? throw new InvalidOperationException($"Type does not appear to represent a known command. {nameof(CommandAttribute)} expected");
+
+        var helpInfo = new CommandHelpInfo(commandAttr.FullName, commandAttr.ShortName, commandAttr.Description);
+
         foreach (var (argProp, attr) in argProps)
         {
             var typeInfo = GetTypeInfo(argProp, attr);

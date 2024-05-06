@@ -4,8 +4,6 @@ using GDMan.Cli.Options;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 
-using SemanticVersioning;
-
 namespace GDMan.Cli.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]

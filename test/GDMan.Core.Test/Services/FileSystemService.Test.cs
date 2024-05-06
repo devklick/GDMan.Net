@@ -4,8 +4,6 @@ using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Core.Services.FileSystem;
 
-using SemanticVersioning;
-
 namespace GDMan.Core.Test.Services;
 
 public class FileSystemServiceTest
