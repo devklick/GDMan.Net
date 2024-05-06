@@ -91,12 +91,9 @@ public class WebApiService(HttpClient client)
         }
 
         // If the response is OK, deserialize the content and return the result
-        if (httpResponseMessage.IsSuccessStatusCode)
-        {
-            return ProcessSuccessResponse<T, TError>(contentType, responseString, successTypeInfo);
-        }
-
-        return ProcessFailureResponse<T, TError>(contentType, responseString, httpResponseMessage.StatusCode, errorTypeInfo);
+        return httpResponseMessage.IsSuccessStatusCode
+            ? ProcessSuccessResponse<T, TError>(contentType, responseString, successTypeInfo)
+            : ProcessFailureResponse<T, TError>(contentType, responseString, httpResponseMessage.StatusCode, errorTypeInfo);
     }
 
     /// <summary>
@@ -160,14 +157,9 @@ public class WebApiService(HttpClient client)
         // If this doesn't work, simply add the response string to the result object's messages
         try
         {
-            if (contentType.Contains("json"))
-            {
-                result.Error = JsonSerializer.Deserialize(contentString, typeInfo);
-            }
-            else
-            {
-                throw new NotImplementedException($"Unsupported content type in response: ${contentType}");
-            }
+            result.Error = contentType.Contains("json")
+                ? JsonSerializer.Deserialize(contentString, typeInfo)
+                : throw new NotImplementedException($"Unsupported content type in response: ${contentType}");
         }
         catch
         {

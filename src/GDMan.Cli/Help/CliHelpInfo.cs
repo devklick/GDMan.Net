@@ -1,5 +1,3 @@
-using System.Data;
-
 namespace GDMan.Cli.Help;
 
 public class CliHelpInfo

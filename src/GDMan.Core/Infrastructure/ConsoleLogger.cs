@@ -19,12 +19,31 @@ public class ConsoleLogger(LogLevel minLogLevel = LogLevel.Information)
     public void LogFatal(string message)
         => Log(LogLevel.Fatal, message);
 
+    public void LogFatal(Exception ex)
+        => Log(LogLevel.Fatal, $"{ex.Message}{Environment.NewLine}{Environment.NewLine}{ex.StackTrace}");
+
     public void LogWarning(string message)
         => Log(LogLevel.Warning, message);
 
     public void Log(LogLevel level, string message)
     {
         if (level < _minLogLevel) return;
+
+        var backOld = Console.BackgroundColor;
+        var frontOld = Console.ForegroundColor;
+
+        if (level == LogLevel.Warning)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+        }
+        else if (level >= LogLevel.Error)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+        }
+
         Console.WriteLine(message);
+
+        Console.BackgroundColor = backOld;
+        Console.ForegroundColor = frontOld;
     }
 }

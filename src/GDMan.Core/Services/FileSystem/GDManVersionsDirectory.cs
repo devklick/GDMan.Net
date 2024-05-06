@@ -19,6 +19,8 @@ public class GDManVersionsDirectory(ConsoleLogger logger, HttpClient? client = n
     {
         var dir = new GodotVersionDirectory(System.IO.Path.Join(Path, destinationFolderName));
 
+        _logger.LogInformation($"Downloading {url} to {dir.Name}");
+
         await Download(url, dir);
 
         _logger.LogInformation($"Extracting contents to {dir.Path}");
@@ -36,11 +38,16 @@ public class GDManVersionsDirectory(ConsoleLogger logger, HttpClient? client = n
         return dir;
     }
 
-    public IEnumerable<string> List()
-        => Directory.GetDirectories(Path).Select(p => new DirectoryInfo(p).Name)!;
+    public IEnumerable<GodotVersionDirectory> List()
+    {
+        _logger.LogInformation("Finding Godot versions installed on the system");
+
+        return Directory.GetDirectories(Path).Select(p => new GodotVersionDirectory(p));
+    }
 
     public bool AlreadyInstalled(string versionName, [NotNullWhen(true)] out GodotVersionDirectory? directory)
     {
+        _logger.LogInformation($"Checking if version {versionName} is already installed on the system");
         var path = System.IO.Path.Join(Path, versionName);
 
         if (Directory.Exists(path))
@@ -56,7 +63,6 @@ public class GDManVersionsDirectory(ConsoleLogger logger, HttpClient? client = n
 
     private async Task<string> Download(string url, GodotVersionDirectory targetDir)
     {
-        _logger.LogInformation($"Downloading {url} to {targetDir}");
         var zip = System.IO.Path.Join(targetDir.Path, $"{targetDir.Name}.zip");
         var response = await _client.GetAsync(url);
 

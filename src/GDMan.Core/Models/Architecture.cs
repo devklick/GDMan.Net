@@ -1,5 +1,3 @@
-using GDMan.Core.Attributes;
-
 namespace GDMan.Core.Models;
 
 public enum Architecture
@@ -7,5 +5,6 @@ public enum Architecture
     Arm32,
     Arm64,
     X86,
-    X64
+    X64,
+    Universal
 }

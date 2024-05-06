@@ -45,11 +45,6 @@ To install a version of Godot, you run the `install` command.
 > [!NOTE]
 > The shorthand command for `install` is `i`
 
-> [!WARNING]
-> GDMan does not support versions version of Godot < 4.
-> This is because the naming convention for it's assets changed considerably.
-> Hopefully this naming convention does not change too much in versions 5+ 🤞
-
 ### Installing latest version
 
 In most cases, you probably want to install the latest version of Godot, so you
@@ -74,6 +69,11 @@ gdman install --version 4.2.2
 > [!NOTE]
 > The shorthand option for `--version` is `-v`
 
+> [!WARNING]
+> GDMan does not support versions version of Godot < 4 for Linux.
+> This is because published linux assets are considerably different between < 4 and >= 4.
+> Hopefully this naming convention does not change too much in versions 5+ 🤞
+
 ### Installing mono version
 
 If you need to install the Mono version of Godot, you can do so by passing in
@@ -92,7 +92,7 @@ gdman install --latest --flavour standard
 ```
 
 > [!NOTE]
-> The shorthand option for `--flavour` is `-f`
+> The shorthand option for `--flavour` is `-fl`
 
 ### Installing the correct version for your platform
 
@@ -153,3 +153,53 @@ gdman current
 
 > [!NOTE]
 > The shorthand command for `current` is `c`
+
+## Uninstalling versions of Godot
+
+You can uninstall versions by using the `uninstall` command.
+
+```
+gdman uninstall
+```
+
+> [!NOTE]
+> The shorthand command for `uninstall` is `u`
+
+### Uninstall unused versions
+
+In most cases, you probably dont want to keep old versions lying around, and just
+want to remove all versions except the one that is currently active. To do so,
+you can specify the `--unused` property.
+
+```
+gdman uninstall --unused
+```
+
+> [!NOTE]
+> The shorthand command for `--unused` is `-u`
+
+### Uninstall specific version(s)
+
+If you want to uninstall one or more specific versions, you can use the `--version`
+option to specify which versions should be uninstalled. Any valid semver version
+range is supported.
+
+For example, uninstall all major version 3:
+
+```
+gdman uninstall --version 3
+```
+
+If you're uninstalling multiple versions using the `--version` option, you will
+need to include the `--force | -f` flag. Without this, the application will print
+the versions that have been found for uninstall but not uninstall them. This is only
+required when multiple versions have been identified matching the input options.
+
+> [!NOTE]
+> The shorthand command for `--version` is `-v`
+
+### Other uninstall options
+
+The uninstall command also optionally supports `--platform`, `-architecture` and
+`--flavour`, just like the install command does. If you do not specify these,
+the application will look for all versions matching the other specified options.

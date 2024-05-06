@@ -4,7 +4,7 @@ using GDMan.Cli.Attributes;
 
 namespace GDMan.Cli.Options;
 
-[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicProperties)]
+[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicMethods)]
 public class BaseOptions
 {
     [Option("verbose", "vl", "Whether or not extensive information should be logged", OptionDataType.Boolean, isFlag: true)]

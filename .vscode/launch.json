@@ -20,11 +20,13 @@
         // "current",
         // "list"
         // "install", 
-        "i",
+        // "i",
         // "--help",
         // "--latest", 
-        // "--flavour", "mono"
-        "--version", "4.2.2-stable"
+        // "--flavour", "mono",
+        // "--version", "4.2.x",
+        "uninstall", "--unused"
+        // "install", "--version", "4.1.3-stable", "-a", "arm32"
       ]
     },
     {
