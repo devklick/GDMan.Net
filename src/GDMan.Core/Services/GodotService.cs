@@ -176,7 +176,10 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         }
 
         if (remove.Count == 0)
+        {
+            _logger.LogInformation("No versions found to uninstall");
             return new Result<object> { Status = ResultStatus.OK };
+        }
 
         _logger.LogInformation("Found the following versions to uninstall");
 

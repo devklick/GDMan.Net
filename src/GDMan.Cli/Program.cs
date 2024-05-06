@@ -7,6 +7,7 @@ using GDMan.Core.Services;
 using GDMan.Core.Services.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Infrastructure;
+using GDMan.Core.Models;
 
 namespace GDMan.Cli;
 
@@ -79,7 +80,7 @@ class Program
     {
         _logger.LogTrace("Processing uninstall command");
 
-        await _godot.UninstallAsync(
+        var result = await _godot.UninstallAsync(
             command.Version,
             command.Platform,
             command.Architecture,
@@ -88,6 +89,8 @@ class Program
             command.Unused
         );
 
+        HandleResult(result);
+
         _logger.LogTrace("Done");
     }
 
@@ -95,13 +98,15 @@ class Program
     {
         _logger.LogTrace($"Processing install command");
 
-        await _godot.InstallAsync(
+        var result = await _godot.InstallAsync(
             command.Version,
             command.Latest,
             command.Platform,
             command.Architecture,
             command.Flavour
         );
+
+        HandleResult(result);
 
         _logger.LogTrace("Done");
     }
@@ -145,5 +150,18 @@ class Program
     {
         _logger.LogFatal(ex);
         Environment.Exit(1);
+    }
+
+    private static void HandleResult<T>(Result<T> result)
+    {
+        if (result.Messages.Any())
+        {
+            var level = result.Status == ResultStatus.OK ? LogLevel.Information : LogLevel.Error;
+            result.Messages.ForEach(message => _logger.Log(level, message));
+        }
+        if (result.Status != ResultStatus.OK)
+        {
+            Environment.Exit(1);
+        }
     }
 }

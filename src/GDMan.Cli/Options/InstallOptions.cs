@@ -24,7 +24,7 @@ public class InstallOptions : BaseOptions
     [Option("architecture", "a", "The system architecture to find a version for", OptionDataType.Enum)]
     public Architecture Architecture { get; set; } = ArchitectureHelper.FromEnvVar() ?? ArchitectureHelper.FromSystem();
 
-    [Option("flavour", "f", "The \"flavour\" (for lack of a better name) of version to use", OptionDataType.Enum)]
+    [Option("flavour", "fl", "The \"flavour\" (for lack of a better name) of version to use", OptionDataType.Enum)]
     public Flavour Flavour { get; set; } = FlavourHelper.FromEnvVar() ?? Flavour.Standard;
 
     public override OptionValidation Validate()

@@ -15,10 +15,10 @@ public class UninstallOptions : BaseOptions
     [Option("architecture", "a", "The system architecture to find a version for", OptionDataType.Enum)]
     public Architecture? Architecture { get; set; }
 
-    [Option("flavour", "f", "The \"flavour\" (for lack of a better name) of version to use", OptionDataType.Enum)]
+    [Option("flavour", "fl", "The \"flavour\" (for lack of a better name) of version to use", OptionDataType.Enum)]
     public Flavour? Flavour { get; set; }
 
-    [Option("flavour", "f", "The \"flavour\" (for lack of a better name) of version to use", OptionDataType.Enum)]
+    [Option("force", "f", "Allows multiple versions matching the --version criteria to be uninstalled", OptionDataType.Boolean, isFlag: true)]
     public bool Force { get; set; } = false;
 
     [Option("unused", "u", "Install all versions other than the currently-active version", OptionDataType.Boolean, isFlag: true)]

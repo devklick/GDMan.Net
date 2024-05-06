@@ -92,7 +92,7 @@ gdman install --latest --flavour standard
 ```
 
 > [!NOTE]
-> The shorthand option for `--flavour` is `-f`
+> The shorthand option for `--flavour` is `-fl`
 
 ### Installing the correct version for your platform
 
@@ -177,3 +177,29 @@ gdman uninstall --unused
 
 > [!NOTE]
 > The shorthand command for `--unused` is `-u`
+
+### Uninstall specific version(s)
+
+If you want to uninstall one or more specific versions, you can use the `--version`
+option to specify which versions should be uninstalled. Any valid semver version
+range is supported.
+
+For example, uninstall all major version 3:
+
+```
+gdman uninstall --version 3
+```
+
+If you're uninstalling multiple versions using the `--version` option, you will
+need to include the `--force | -f` flag. Without this, the application will print
+the versions that have been found for uninstall but not uninstall them. This is only
+required when multiple versions have been identified matching the input options.
+
+> [!NOTE]
+> The shorthand command for `--version` is `-v`
+
+### Other uninstall options
+
+The uninstall command also optionally supports `--platform`, `-architecture` and
+`--flavour`, just like the install command does. If you do not specify these,
+the application will look for all versions matching the other specified options.
