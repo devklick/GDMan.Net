@@ -21,10 +21,14 @@ public class Parser(ConsoleLogger logger)
 
         var result = new ParseResult();
 
-        var arg1 = args.First();
+        var arg1 = args.FirstOrDefault();
         if (!TryInitCommandOptions(arg1, out var options, out var helpInfo))
         {
-            result.Errors.Add($"{arg1} is not a known command");
+            if (!string.IsNullOrEmpty(arg1))
+            {
+                result.Errors.Add($"{arg1} is not a known command");
+            }
+
             result.HelpInfo = helpInfo;
             result.RequiresHelp = true;
             return result;
