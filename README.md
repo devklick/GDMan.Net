@@ -38,6 +38,24 @@ This will allow you to invoke two commands from your terminal:
   <br/>
   **Note that this will not exist until you first install a version of Godot via GDMan**
 
+#### Windows Install Script
+
+Rather than downloading manually, you can run the PowerShell installer script to
+install GDMan on Windows:
+
+Run the following in a Admin PowerShell prompt:
+
+```ps1
+. {iwr -useb https://raw.githubusercontent.com/devklick/GDMan/install/install-windows.ps1} | iex;
+```
+
+This will:
+
+- Download the latest GDMan release for Windows to your Downloads folder
+- Extract the downloaded zip file to %APPDATA%\gdman
+- Delete the downloaded zip file from Downloads
+- Update your PATH to include %APPDATA%\gdman in it, if it's not already present
+
 ## Installing versions of Godot
 
 To install a version of Godot, you run the `install` command.
