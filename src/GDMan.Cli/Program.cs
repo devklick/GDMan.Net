@@ -47,24 +47,24 @@ class Program
         }
     }
 
-    private static async Task HandleParseResult(ParseResult cliArgs)
+    private static async Task HandleParseResult(ParseResult result)
     {
-        if (cliArgs.RequiresHelp)
+        if (result.HasError)
         {
-            HandleHelp(cliArgs);
+            HandleError(result);
         }
 
-        if (cliArgs.HasError)
+        if (result.RequiresHelp)
         {
-            HandleError(cliArgs);
+            HandleHelp(result);
         }
 
-        if (cliArgs.Options == null)
+        if (result.Options == null)
         {
             throw new NullReferenceException("Expected Options to have a value but found null");
         }
 
-        await RunAsync(cliArgs.Options);
+        await RunAsync(result.Options);
     }
 
     private static Task RunAsync(BaseOptions command) => command switch
@@ -138,10 +138,10 @@ class Program
     }
 
     [DoesNotReturn]
-    private static void HandleError(ParseResult cliArgs)
+    private static void HandleError(ParseResult result)
     {
-        _logger.LogError(string.Join(Environment.NewLine, new List<string>(cliArgs.Errors.Append(Environment.NewLine))));
-        _logger.LogInformation(cliArgs.HelpInfoString);
+        _logger.LogError(string.Join(Environment.NewLine, new List<string>(result.Errors.Append(""))));
+        _logger.LogInformation(result.HelpInfoString);
         Environment.Exit(1);
     }
 
