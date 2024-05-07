@@ -9,6 +9,8 @@ using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 using GDMan.Core.Infrastructure;
 
+using SharpCompress;
+
 namespace GDMan.Cli.Parsing;
 
 public class Parser(ConsoleLogger logger)
@@ -24,7 +26,8 @@ public class Parser(ConsoleLogger logger)
         var arg1 = args.FirstOrDefault();
         if (!TryInitCommandOptions(arg1, out var options, out var helpInfo))
         {
-            if (!string.IsNullOrEmpty(arg1))
+            // TODO: Apply a proper fix for this
+            if (!string.IsNullOrEmpty(arg1) && !new List<string>([CliHelpInfo.FullName, CliHelpInfo.ShortName]).Contains(arg1))
             {
                 result.Errors.Add($"{arg1} is not a known command");
             }
