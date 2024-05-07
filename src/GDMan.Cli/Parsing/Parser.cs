@@ -9,8 +9,6 @@ using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 using GDMan.Core.Infrastructure;
 
-using SharpCompress;
-
 namespace GDMan.Cli.Parsing;
 
 public class Parser(ConsoleLogger logger)
