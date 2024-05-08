@@ -24,24 +24,28 @@ And that's exactly what GDMan does!
 
 ## Installing GDMan
 
-GDMan is cross-platform CLI application that runs in an entirely self-contained folder.
-That means that basically all you have to is download it and run it.
+GDMan can be installed either by manually carrying out a few simple steps or running
+one of the install scripts.
+
+<details>
+<summary>Manual Install</summary>
+
+You can manually install GDMan in a few steps:
 
 - Download the [latest release](https://github.com/devklick/GDMan/releases/latest)
-  for your operating system and extract it to a folder of your choice, e.g. `~/gdman`.
-- Update your path, adding your new folder to it. In the above example, we'd add `~/gdman` to the PATH.
+  for your operating system
+- Extract it to a folder of your choice, e.g. `~/gdman`
+- Update your path, adding your new folder to it. In the above example,
+  we'd add `~/gdman` to the PATH.
+- Delete the downloaded zip file - it's no longer needed
 
-This will allow you to invoke two commands from your terminal:
+</details>
 
-- `gdman` - for managing versions of Godot
-- `godot` - to run the currently-active version of Godot
-  <br/>
-  **Note that this will not exist until you first install a version of Godot via GDMan**
+<details>
+<summary>Windows Install Script</summary>
 
-#### Windows Install Script
-
-Rather than downloading manually, you can run the PowerShell installer script to
-install GDMan on Windows:
+Rather than running through the steps manually, you can run the
+[PowerShell install script](/install/install-windows.ps1) to install GDMan on Windows.
 
 Run the following in a Admin PowerShell prompt:
 
@@ -49,12 +53,51 @@ Run the following in a Admin PowerShell prompt:
 . {iwr -useb https://raw.githubusercontent.com/devklick/GDMan/install/install-windows.ps1} | iex;
 ```
 
-This will:
+</details>
 
-- Download the latest GDMan release for Windows to your Downloads folder
-- Extract the downloaded zip file to %APPDATA%\gdman
-- Delete the downloaded zip file from Downloads
-- Update your PATH to include %APPDATA%\gdman in it, if it's not already present
+<details>
+<summary>Linux Install Script</summary>
+
+You can run the following to use the [install script for Linux](/install/install-unix.sh):
+
+```
+wget -q https://raw.githubusercontent.com/devklick/GDMan/install/install-unix.sh -O - | bash -s linux
+```
+
+The script will require the following tools to be available on the machine:
+
+- curl
+- jq
+- wget
+- unzip
+
+</details>
+
+<details>
+<summary>MacOS Install Script</summary>
+
+There's no bespoke script for installing on MacOS, however if you have the right tools
+available on your Mac, you can probably use the Linux install script and pass in `osx` as an argument:
+
+```
+wget -q https://raw.githubusercontent.com/devklick/GDMan/install/install-unix.sh -O - | bash -s linux
+```
+
+The script will require the following tools to be available on the machine:
+
+- curl
+- jq
+- wget
+- unzip
+
+</details>
+
+Once you have GDMan installed, you should be able to invoke the following two commands from your terminal:
+
+- `gdman` - for managing versions of Godot
+- `godot` - to run the currently-active version of Godot
+  <br/>
+  **Note that the latter will not exist until you first install a version of Godot via GDMan**
 
 ## Installing versions of Godot
 
