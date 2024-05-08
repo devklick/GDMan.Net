@@ -50,7 +50,7 @@ Rather than running through the steps manually, you can run the
 Run the following in a Admin PowerShell prompt:
 
 ```ps1
-. {iwr -useb https://raw.githubusercontent.com/devklick/GDMan/install/install-windows.ps1} | iex;
+. {iwr -useb https://raw.githubusercontent.com/devklick/GDMan/master/install/install-windows.ps1} | iex;
 ```
 
 </details>
@@ -61,7 +61,7 @@ Run the following in a Admin PowerShell prompt:
 You can run the following to use the [install script for Linux](/install/install-unix.sh):
 
 ```
-wget -q https://raw.githubusercontent.com/devklick/GDMan/install/install-unix.sh -O - | bash -s linux
+wget -q https://raw.githubusercontent.com/devklick/GDMan/master/install/install-unix.sh -O - | bash -s linux
 ```
 
 The script will require the following tools to be available on the machine:
@@ -80,7 +80,7 @@ There's no bespoke script for installing on MacOS, however if you have the right
 available on your Mac, you can probably use the Linux install script and pass in `osx` as an argument:
 
 ```
-wget -q https://raw.githubusercontent.com/devklick/GDMan/install/install-unix.sh -O - | bash -s linux
+wget -q https://raw.githubusercontent.com/devklick/GDMan/master/install/install-unix.sh -O - | bash -s linux
 ```
 
 The script will require the following tools to be available on the machine:
