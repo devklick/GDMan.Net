@@ -1,6 +1,8 @@
 #!/bin/bash
 
 target_os=$1
+echo "Target OS '$target_os'"
+
 zip_path="$HOME/Downloads/gdman.zip"
 install_dir="$HOME/gdman"
 
