@@ -1,13 +1,8 @@
 #!/bin/bash
 
 target_os=$1
-echo "Target OS '$target_os'"
-
 zip_path="$HOME/Downloads/gdman.zip"
-echo "Asset download path '$zip_path'"
-
 install_dir="$HOME/gdman"
-echo "App install path '$zip_path'"
 
 # Download the latest release information from GitHub API
 echo "Finding latest version"
@@ -16,7 +11,7 @@ echo $response
 
 # Extract the browser download URL for the asset
 download_url=$(echo "$response" | jq -r '.assets[] | select(.name | test("'${target_os}'")) | .browser_download_url')
-echo "Found download '$download_url'";
+echo "Found '$download_url'";
 
 # Download the zip file to the Downloads directory
 echo "Downloading"
@@ -41,7 +36,4 @@ if [[ ! ":$PATH:" == *":$install_dir:"* ]]; then
     else
         echo ".zshrc not found"
     fi
-    
-else
-    echo "gdman directory already in path"
 fi
