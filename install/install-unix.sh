@@ -4,14 +4,10 @@ target_os=$1
 zip_path="$HOME/Downloads/gdman.zip"
 install_dir="$HOME/gdman"
 
-# Download the latest release information from GitHub API
+# Find the latest release for the target OS
 echo "Finding latest version"
-response=$(curl -s https://api.github.com/repos/devklick/GDMan/releases/latest)
-echo $response
-
-# Extract the browser download URL for the asset
-download_url=$(echo "$response" | jq -r '.assets[] | select(.name | test("'${target_os}'")) | .browser_download_url')
-echo "Found '$download_url'";
+download_url=$(curl -s https://api.github.com/repos/devklick/GDMan/releases/latest | jq -r '.assets[] | select(.name | test("'${target_os}'")) | .browser_download_url')
+echo "Found $download_url";
 
 # Download the zip file to the Downloads directory
 echo "Downloading"
