@@ -26,7 +26,9 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         // If exact version requested, check if that version is installed
         //      ? Yes, Update symlink to point to this version - done
         //      : No, proceed to download and install
-        if (versionRange != null && SemVerHelper.TryParseVersion(versionRange.ToString(), out var version))
+        // The version is saved to disk including the stable pre-release flag in the name, if that's how it's published on github. 
+        // So here, we dont want to exclude the stable pre-release flag when parsing
+        if (versionRange != null && SemVerHelper.TryParseVersion(versionRange.ToString(), [], out var version))
         {
             versionName = _gdman.GenerateVersionName(version, platform, architecture, flavour);
 
@@ -63,7 +65,9 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         var release = ghResult.Value
             ?? throw new InvalidOperationException("Unable to find release");
 
-        if (!SemVerHelper.TryParseVersion(release.TagName, out version))
+        // The version is saved to disk including the stable pre-release flag in the name, if that's how it's published on github. 
+        // So here, we dont want to exclude the stable pre-release flag when parsing
+        if (!SemVerHelper.TryParseVersion(release.TagName, [], out version))
         {
             throw new InvalidOperationException($"Release {release.TagName} has an invalid version number");
         }

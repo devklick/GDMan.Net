@@ -89,7 +89,14 @@ public class GithubApiService(WebApiService webApiService, ConsoleLogger logger)
 
         if (versionRange != null)
         {
-            candidates = candidates.Where(c => SemVerHelper.TryParseVersion(c.TagName, out var version) && versionRange.IsSatisfied(version, true));
+
+            candidates = candidates.Where(c =>
+                // Initially try to match excluding by ignoring stable pre-releases. 
+                // This works when the user specified an exact version, e.g. 4.2.2, but tag is named 4.2.2-stable
+                (SemVerHelper.TryParseVersion(c.TagName, ["stable"], out var version) && versionRange.IsSatisfied(version, true))
+                // Fallback on matching with including stable pre-releases.
+                // This works when the user includes the exact version including the stable pre-release, e.g. user specifies 4.2.2
+                || (SemVerHelper.TryParseVersion(c.TagName, [], out var versionWithStable) && versionRange.IsSatisfied(versionWithStable, true)));
         }
 
         if (!candidates.Any())
