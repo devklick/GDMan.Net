@@ -1,7 +1,11 @@
 using System.Text;
+using System.Runtime.Versioning;
+using System.Diagnostics;
 
 using GDMan.Core.Models;
 using GDMan.Core.Infrastructure;
+
+using Architecture = GDMan.Core.Models.Architecture;
 
 namespace GDMan.Core.Services.FileSystem;
 
@@ -38,8 +42,8 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// updating the <see cref="KnownPaths.GodotLinkPath"/> to point to the specified version.
     /// </summary>
     /// <param name="version"></param>
-    public void SetActive(GodotVersionDirectory version)
-        => CreateOrUpdateGodotLink(version.ExecutablePath);
+    public async Task SetActive(GodotVersionDirectory version)
+        => await CreateOrUpdateGodotLink(version.ExecutablePath);
 
     /// <summary>
     /// Generates the name that the published Godot version is expected to match
@@ -116,12 +120,56 @@ public class GDManDirectory(ConsoleLogger logger, GDManVersionsDirectory version
     /// the specified <paramref name="targetPath"/> if it does not yet exist, 
     /// or updates it if it already exists.
     /// </summary>
-    public void CreateOrUpdateGodotLink(string targetPath)
+    public async Task CreateOrUpdateGodotLink(string targetPath)
     {
         // Delete the current symlink if it exists
         if (File.Exists(KnownPaths.GodotLinkPath)) File.Delete(KnownPaths.GodotLinkPath);
 
-        // Create the symlink pointing to the exe file
-        File.CreateSymbolicLink(KnownPaths.GodotLinkPath, targetPath);
+        if (OperatingSystem.IsWindows()) await CreateShortcut(targetPath);
+        else File.CreateSymbolicLink(KnownPaths.GodotLinkPath, targetPath);
+
+    }
+
+    [SupportedOSPlatform("windows")]
+    private async Task CreateShortcut(string targetPath)
+    {
+        // Hacky approach to create a shortcut on windows.
+        // Ideally should look into creating a com wrapper,
+        // e.g. https://learn.microsoft.com/en-us/dotnet/standard/native-interop/tutorial-comwrappers
+        var arguments = $"$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut('{KnownPaths.GodotLinkPath}.lnk');$Shortcut.TargetPath = '{targetPath}';$Shortcut.Save()";
+
+        var processInfo = new ProcessStartInfo
+        {
+            Verb = "runas",
+            LoadUserProfile = true,
+            FileName = "powershell.exe",
+            Arguments = arguments,
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
+            RedirectStandardError = true,
+        };
+
+        var process = Process.Start(processInfo)
+            ?? throw new InvalidProgramException("Unable to invoke PowerShell to create shortcut");
+
+        var error = false;
+        process.ErrorDataReceived += (s, e) =>
+        {
+            if (!error && !string.IsNullOrWhiteSpace(e.Data))
+            {
+                error = true;
+            }
+            _logger.LogError(e.Data ?? "");
+        };
+
+        process.Start();
+        process.BeginErrorReadLine();
+        await process.WaitForExitAsync();
+
+        if (error)
+        {
+            throw new InvalidProgramException($"Error creating shortcut");
+        }
     }
 }

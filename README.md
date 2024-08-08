@@ -98,6 +98,8 @@ Once you have GDMan installed, you should be able to invoke the following two co
 - `godot` - to run the currently-active version of Godot
   <br/>
   **Note that the latter will not exist until you first install a version of Godot via GDMan**
+  <br/>
+  **Note that on Windows, you may need to use `godot.lnk` rather than just `godot`**
 
 ## Installing versions of Godot
 
