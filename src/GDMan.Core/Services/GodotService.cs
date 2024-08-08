@@ -33,7 +33,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
             if (_gdman.GDManVersionsDirectory.AlreadyInstalled(versionName, out versionDir))
             {
                 _logger.LogInformation($"Version {versionName} already installed, setting active");
-                _gdman.SetActive(versionDir);
+                await _gdman.SetActive(versionDir);
                 return new Result<object>(ResultStatus.OK, null);
             }
         }
@@ -73,7 +73,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         if (_gdman.GDManVersionsDirectory.AlreadyInstalled(versionName, out versionDir))
         {
             _logger.LogInformation($"Version {versionName} already installed, setting active");
-            _gdman.SetActive(versionDir);
+            await _gdman.SetActive(versionDir);
             return new Result<object>(ResultStatus.OK, null);
         }
         // -------------------------------------------------
@@ -86,7 +86,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
 
         versionDir = await _gdman.GDManVersionsDirectory.Install(downloadUrl, versionName);
 
-        _gdman.SetActive(versionDir);
+        await _gdman.SetActive(versionDir);
         // -------------------------------------------------
 
         return new Result<object>();
