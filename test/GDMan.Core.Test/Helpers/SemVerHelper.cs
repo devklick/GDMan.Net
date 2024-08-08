@@ -20,7 +20,7 @@ public class SemVerHelperTest
     [InlineData("a.b.c-stable", false, null)]
     public void TryParseVersion(string input, bool expectValid, string? expectExactVersion)
     {
-        var result = SemVerHelper.TryParseVersion(input, out var version);
+        var result = SemVerHelper.TryParseVersion(input, [], out var version);
         result.Should().Be(expectValid);
 
         if (expectValid)
