@@ -1,35 +1,43 @@
 #!/bin/bash
 
-target_os=$1
-zip_path="$HOME/Downloads/gdman.zip"
-install_dir="$HOME/gdman"
+t=$1
+z="$HOME/Downloads/gdman.zip"
+d="$HOME/gdman"
 
 # Find the latest release for the target OS
-echo "Finding latest version"
-download_url=$(curl -s https://api.github.com/repos/devklick/GDMan/releases/latest | jq -r '.assets[] | select(.name | test("'${target_os}'")) | .browser_download_url')
-echo "Found $download_url";
+echo Finding latest version
+r=$(curl -s https://api.github.com/repos/devklick/GDMan/releases/latest)
+u=$(echo "$r" | jq -r --arg t "$t" '.assets[] | select(.name | test($t)) | .browser_download_url')
+v=$(echo "$r" | jq -r '.tag_name')
+echo Found $v;
 
 # Download the zip file to the Downloads directory
-echo "Downloading"
-wget -q "$download_url" -O "$zip_path"
+echo Downloading
+wget -q "$u" -O "$z"
 
 # Extract the contents of the zip file to the installation directory
-echo "Extracting"
-unzip -qq -o "$zip_path" -d "$install_dir"
+echo Extracting
+unzip -qq -o "$z" -d "$d"
 
 # Remove the downloaded zip file
-rm "$zip_path"
-echo "Removing archive"
+rm "$z"
+echo Removing archive
 
 # Add gdman directory to the PATH if not already present
-if [[ ! ":$PATH:" == *":$install_dir:"* ]]; then
+if [[ ! ":$PATH:" == *":$d:"* ]]; then
     echo "Adding gdman directory to PATH"
-    export PATH="$install_dir:$PATH"
-    echo 'export PATH="'${install_dir}':$PATH"' >> "$HOME/.bashrc"
+    export PATH="$PATH:$d"
+    echo 'export PATH="$PATH:'${d}'"' >> "$HOME/.bashrc"
 
     if [ -e "$HOME/.zshrc" ]; then
-        echo 'export PATH="'${install_dir}':$PATH"' >> "$HOME/.zshrc"
+        echo 'export PATH="$PATH:'${d}'"' >> "$HOME/.zshrc"
     else
         echo ".zshrc not found"
     fi
 fi
+
+echo 
+echo GDMan $v installed successfully
+echo For information on usage, invoke:
+echo 
+echo gdman --help

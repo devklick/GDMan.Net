@@ -10,9 +10,6 @@
 <br/>
 <br/>
 
-> [!WARNING]
-> This project is WIP
-
 ## Motivation
 
 While working with Godot on Linux, I find it a chore having to download new versions,
@@ -22,10 +19,10 @@ I wanted a way to simply run a command and have all this happen behind the scene
 
 And that's exactly what GDMan does!
 
-## Installing GDMan
+## Installing/Updating GDMan
 
 GDMan can be installed either by manually carrying out a few simple steps or running
-one of the install scripts.
+one of the install scripts. The same process can be used for updating to the latest version.
 
 <details>
 <summary>Manual Install</summary>
@@ -96,10 +93,20 @@ Once you have GDMan installed, you should be able to invoke the following two co
 
 - `gdman` - for managing versions of Godot
 - `godot` - to run the currently-active version of Godot
-  <br/>
-  **Note that the latter will not exist until you first install a version of Godot via GDMan**
-  <br/>
-  **Note that on Windows, you may need to use `godot.lnk` rather than just `godot`**
+
+**Note** that the latter will not exist until you first install a version of Godot via GDMan
+<br/>
+**Note** that on Windows, you may need to use `godot.lnk` rather than just `godot`
+
+### Installation Locations
+
+If you use the install scripts, GDMan will be installed in:
+
+- (Windows) - `C:\Users\user\gdman`
+- (Linux / macOS) - `/home/user/gdman`
+
+Note that each version of Godot you install install using GDMan can be found
+within the above directory, in a folder called `versions`.
 
 ## Installing versions of Godot
 
