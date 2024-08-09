@@ -100,10 +100,18 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
     {
         var versions = await Task.FromResult(_gdman.GDManVersionsDirectory.List());
 
-        foreach (var version in versions)
+        if (versions.Any())
         {
-            _logger.LogInformation(version.Name);
+            foreach (var version in versions)
+            {
+                _logger.LogInformation(version.Name);
+            }
         }
+        else
+        {
+            _logger.LogInformation("No versions installed. To instal a version of Godot, run: gdman install");
+        }
+
 
         return new Result<IEnumerable<string>>
         {
