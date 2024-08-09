@@ -10,9 +10,6 @@
 <br/>
 <br/>
 
-> [!WARNING]
-> This project is WIP
-
 ## Motivation
 
 While working with Godot on Linux, I find it a chore having to download new versions,
@@ -100,6 +97,16 @@ Once you have GDMan installed, you should be able to invoke the following two co
 **Note** that the latter will not exist until you first install a version of Godot via GDMan
 <br/>
 **Note** that on Windows, you may need to use `godot.lnk` rather than just `godot`
+
+### Installation Locations
+
+If you use the install scripts, GDMan will be installed in:
+
+- (Windows) - `C:\Users\user\gdman`
+- (Linux / macOS) - `/home/user/gdman`
+
+Note that each version of Godot you install install using GDMan can be found
+within the above directory, in a folder called `versions`.
 
 ## Installing versions of Godot
 
