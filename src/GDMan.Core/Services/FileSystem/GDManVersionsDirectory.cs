@@ -38,11 +38,15 @@ public class GDManVersionsDirectory(ConsoleLogger logger, HttpClient? client = n
         return dir;
     }
 
+    public bool Exists() => Directory.Exists(Path);
+
     public IEnumerable<GodotVersionDirectory> List()
     {
         _logger.LogInformation("Finding Godot versions installed on the system");
 
-        return Directory.GetDirectories(Path).Select(p => new GodotVersionDirectory(p));
+        return Exists()
+            ? Directory.GetDirectories(Path).Select(p => new GodotVersionDirectory(p))
+            : [];
     }
 
     public bool AlreadyInstalled(string versionName, [NotNullWhen(true)] out GodotVersionDirectory? directory)
