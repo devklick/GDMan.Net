@@ -5,6 +5,7 @@ using System.Reflection;
 using GDMan.Cli.Attributes;
 using GDMan.Cli.Help;
 using GDMan.Cli.Options;
+using GDMan.Cli.Version;
 using GDMan.Core.Attributes;
 using GDMan.Core.Extensions;
 using GDMan.Core.Infrastructure;
@@ -14,6 +15,7 @@ namespace GDMan.Cli.Parsing;
 public class Parser(ConsoleLogger logger)
 {
     private readonly ConsoleLogger _logger = logger;
+    private readonly string[] _globalOptions = [.. CliHelpInfo.Names, .. CliVersionInfo.Names];
 
     public ParseResult Parse(params string[] args)
     {
@@ -24,18 +26,26 @@ public class Parser(ConsoleLogger logger)
         var arg1 = args.FirstOrDefault();
         if (!TryInitCommandOptions(arg1, out var options, out var helpInfo))
         {
-            // TODO: Apply a proper fix for this
-            if (!string.IsNullOrEmpty(arg1) && !new List<string>([CliHelpInfo.FullName, CliHelpInfo.ShortName]).Contains(arg1))
+            if (!string.IsNullOrEmpty(arg1) && !_globalOptions.Contains(arg1))
             {
                 result.Errors.Add($"{arg1} is not a known command");
             }
+        }
 
-            result.HelpInfo = helpInfo;
-            result.RequiresHelp = true;
+        result.HelpInfo = helpInfo;
+        result.Options = options;
+
+        if (CliVersionInfo.Names.Contains(arg1))
+        {
+            result.RequiresVersion = true;
             return result;
         }
 
-        result.Options = options;
+        if (result.Options == null || CliHelpInfo.Names.Contains(arg1))
+        {
+            result.RequiresHelp = true;
+            return result;
+        }
 
         var props = GetOptionProps(result.Options.GetType());
 
@@ -47,8 +57,23 @@ public class Parser(ConsoleLogger logger)
             return result;
         }
 
-        // skip first arg, we've already handled it
-        // by determining the command to run
+        ProcessArgs(args, props, result);
+
+        if (result.Errors.Count != 0) return result;
+
+        var objectValidation = result.Options.Validate();
+
+        if (!objectValidation.Valid)
+        {
+            result.Errors.AddRange(objectValidation.Messages);
+        }
+
+        return result;
+    }
+
+    private void ProcessArgs(string[] args, IEnumerable<(PropertyInfo argProp, OptionAttribute attr)> props, ParseResult result)
+    {
+        // skip first arg, we've already handled it by determining the command to run
         var i = 1;
         while (i < args.Length)
         {
@@ -60,7 +85,7 @@ public class Parser(ConsoleLogger logger)
             if (attr == null)
             {
                 result.Errors.Add($"Unknown argument: {name}");
-                return result;
+                return;
             }
 
             string? value = null;
@@ -81,22 +106,13 @@ public class Parser(ConsoleLogger logger)
             if (!argValidation.Valid)
             {
                 result.Errors.Add($"Invalid value for argument {name}: {value}");
-                return result;
+                return;
             }
 
             argProp.SetValue(result.Options, argValidation.Value);
 
             i += attr.IsFlag ? 1 : 2;
         }
-
-        var objectValidation = result.Options.Validate();
-
-        if (!objectValidation.Valid)
-        {
-            result.Errors.AddRange(objectValidation.Messages);
-        }
-
-        return result;
     }
 
     private static bool TryInitCommandOptions(string? arg1, [NotNullWhen(true)] out BaseOptions? options, out AppHelpInfo helpInfo)
