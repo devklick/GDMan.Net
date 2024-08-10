@@ -1,5 +1,7 @@
 using System.Data;
 
+using GDMan.Cli.Version;
+
 namespace GDMan.Cli.Help;
 
 /// <summary>
@@ -10,13 +12,10 @@ namespace GDMan.Cli.Help;
 public class AppHelpInfo : CliHelpInfo
 {
     public static string AppName => "GDMan";
-    public static string AppVersion =>
-        typeof(CliHelpInfo).Assembly.GetName().Version?.ToString()
-        ?? throw new VersionNotFoundException("Unable to determine the application version");
     public static string AppDescription => "Command line application for managing versions of Godot";
     public List<(string FullName, string ShortName, string Description)> KnownCommands { get; set; } = [];
     public override string ToString()
-        => $"{AppName} (v{AppVersion})"
+        => $"{AppName} {CliVersionInfo.ToString()}"
         + Environment.NewLine
         + AppDescription
         + Environment.NewLine + Environment.NewLine

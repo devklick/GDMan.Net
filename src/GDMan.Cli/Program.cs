@@ -8,6 +8,7 @@ using GDMan.Core.Services.Github;
 using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
+using GDMan.Cli.Version;
 
 namespace GDMan.Cli;
 
@@ -61,6 +62,11 @@ class Program
         if (result.RequiresHelp)
         {
             HandleHelp(result);
+        }
+
+        if (result.RequiresVersion)
+        {
+            HandleVersion(result);
         }
 
         if (result.Options == null)
@@ -138,6 +144,13 @@ class Program
     private static void HandleHelp(ParseResult cliArgs)
     {
         _logger.LogInformation(cliArgs.HelpInfoString);
+        Environment.Exit(0);
+    }
+
+    [DoesNotReturn]
+    private static void HandleVersion(ParseResult parseResult)
+    {
+        _logger.LogInformation(CliVersionInfo.ToString());
         Environment.Exit(0);
     }
 
