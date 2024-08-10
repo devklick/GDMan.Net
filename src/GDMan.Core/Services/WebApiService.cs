@@ -30,7 +30,7 @@ public class WebApiService(HttpClient client)
         {
             var endpoint = BuildEndpointUrl(baseUrl, controller, action, queryParameters, trimTrailingSlash);
             var httpResponse = await _client.GetAsync(endpoint);
-            result = await ProcessResponse<T, TError>(httpResponse, successTypeInfo, errorTypeInfo);
+            result = await ProcessResponse(httpResponse, successTypeInfo, errorTypeInfo);
         }
         catch (Exception ex)
         {

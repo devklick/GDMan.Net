@@ -27,6 +27,8 @@ class Program
             .AddSingleton(new ConsoleLogger(args.Contains("--verbose") || args.Contains("-vl") ? LogLevel.Trace : LogLevel.Information))
             .AddSingleton<GithubApiService>()
             .AddSingleton<GodotService>()
+            .AddSingleton<UpdateCheckerService>()
+            .AddSingleton<GDManRepoService>()
             .AddSingleton<Parser>()
             .AddSingleton<GDManDirectory>()
             .AddSingleton<GDManVersionsDirectory>()
@@ -35,10 +37,12 @@ class Program
         _logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
         _godot = _serviceProvider.GetRequiredService<GodotService>();
 
+        var updateChecker = _serviceProvider.GetRequiredService<UpdateCheckerService>();
         var parser = _serviceProvider.GetRequiredService<Parser>();
 
         try
         {
+            await updateChecker.CheckForUpdates();
             await HandleParseResult(parser.Parse(args));
         }
         catch (Exception ex)
