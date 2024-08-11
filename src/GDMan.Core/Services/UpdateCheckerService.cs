@@ -27,6 +27,8 @@ public class UpdateCheckerService(GDManRepoService gdmanRepoService, ConsoleLogg
         // Skip if we've already performed the check in the current process.
         if (Checked) return;
 
+        _logger.LogInformation("Checking for updates");
+
         var result = await _gdmanRepoService.GetLatestVersion();
 
         if (result.Status != ResultStatus.OK || result.Value == null)
@@ -61,6 +63,7 @@ public class UpdateCheckerService(GDManRepoService gdmanRepoService, ConsoleLogg
         }
 
         _logger.LogInformation("Already on latest version");
+        _logger.NewLine();
     }
 
     public async Task CheckForUpdatesIfDue()
