@@ -18,6 +18,7 @@ class Program
 #pragma warning disable IDE1006 // Naming Styles
     private static ServiceProvider _serviceProvider;
     private static GodotService _godot;
+    private static UpdateCheckerService _updateChecker;
     private static ConsoleLogger _logger;
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 #pragma warning restore IDE1006 // Naming Styles
@@ -28,6 +29,8 @@ class Program
             .AddSingleton(new ConsoleLogger(args.Contains("--verbose") || args.Contains("-vl") ? LogLevel.Trace : LogLevel.Information))
             .AddSingleton<GithubApiService>()
             .AddSingleton<GodotService>()
+            .AddSingleton<UpdateCheckerService>()
+            .AddSingleton<GDManRepoService>()
             .AddSingleton<Parser>()
             .AddSingleton<GDManDirectory>()
             .AddSingleton<GDManVersionsDirectory>()
@@ -35,11 +38,13 @@ class Program
 
         _logger = _serviceProvider.GetRequiredService<ConsoleLogger>();
         _godot = _serviceProvider.GetRequiredService<GodotService>();
+        _updateChecker = _serviceProvider.GetRequiredService<UpdateCheckerService>();
 
         var parser = _serviceProvider.GetRequiredService<Parser>();
 
         try
         {
+            await _updateChecker.CheckForUpdatesIfDue();
             await HandleParseResult(parser.Parse(args));
         }
         catch (Exception ex)
@@ -79,6 +84,7 @@ class Program
         ListOptions i => RunListAsync(i),
         CurrentOptions i => RunCurrentAsync(i),
         UninstallOptions i => RunUninstallAsync(i),
+        UpdateOptions i => RunUpdateAsync(i),
         _ => throw new InvalidOperationException()
     };
 
@@ -102,7 +108,7 @@ class Program
 
     private static async Task RunInstallAsync(InstallOptions command)
     {
-        _logger.LogTrace($"Processing install command");
+        _logger.LogTrace("Processing install command");
 
         var result = await _godot.InstallAsync(
             command.Version,
@@ -119,7 +125,7 @@ class Program
 
     private static async Task RunListAsync(ListOptions command)
     {
-        _logger.LogTrace($"Processing list command");
+        _logger.LogTrace("Processing list command");
 
         await _godot.ListAsync();
 
@@ -128,11 +134,20 @@ class Program
 
     private static async Task RunCurrentAsync(CurrentOptions command)
     {
-        _logger.LogTrace($"Processing current command");
+        _logger.LogTrace("Processing current command");
 
         await _godot.GetCurrentVersion();
 
-        _logger.LogTrace($"Done");
+        _logger.LogTrace("Done");
+    }
+
+    private static async Task RunUpdateAsync(UpdateOptions command)
+    {
+        _logger.LogTrace("Processing current command");
+
+        await _updateChecker.CheckForUpdates();
+
+        _logger.LogTrace("Done");
     }
 
 

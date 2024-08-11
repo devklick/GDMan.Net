@@ -46,4 +46,6 @@ public class ConsoleLogger(LogLevel minLogLevel = LogLevel.Information)
         Console.BackgroundColor = backOld;
         Console.ForegroundColor = frontOld;
     }
+
+    public void NewLine(LogLevel level = LogLevel.Information) => Log(level, "");
 }

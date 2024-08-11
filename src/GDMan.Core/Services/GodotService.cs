@@ -109,7 +109,7 @@ public class GodotService(GithubApiService github, ConsoleLogger logger, GDManDi
         }
         else
         {
-            _logger.LogInformation("No versions installed. To instal a version of Godot, run: gdman install");
+            _logger.LogInformation("No versions installed. To install a version of Godot, run: gdman install");
         }
 
 

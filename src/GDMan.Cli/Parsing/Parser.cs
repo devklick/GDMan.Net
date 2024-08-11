@@ -132,6 +132,9 @@ public class Parser(ConsoleLogger logger)
         if (TryInitCommandOptions<UninstallOptions>(arg1, out var uninstall, ref helpInfo))
             returnOptions = uninstall;
 
+        if (TryInitCommandOptions<UpdateOptions>(arg1, out var update, ref helpInfo))
+            returnOptions = update;
+
         options = returnOptions;
 
         return options != null;
