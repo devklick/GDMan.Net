@@ -38,7 +38,7 @@ public class GDManRepoService(GithubApiService githubApiService, ConsoleLogger l
         return new()
         {
             Status = ResultStatus.OK,
-            Value = new(SemanticVersioning.Version.Parse(latest.TagName), latest.HtmlUrl)
+            Value = new(SemanticVersioning.Version.Parse(latest.TagName, true), latest.HtmlUrl)
         };
     }
 }
