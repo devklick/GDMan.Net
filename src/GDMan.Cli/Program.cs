@@ -9,6 +9,7 @@ using GDMan.Core.Services.FileSystem;
 using GDMan.Core.Infrastructure;
 using GDMan.Core.Models;
 using GDMan.Cli.Version;
+using GDMan.Core.Services.Config;
 
 namespace GDMan.Cli;
 
@@ -25,6 +26,7 @@ class Program
 
     static async Task Main(string[] args)
     {
+        var a = ConfigService.GetValue("");
         _serviceProvider = new ServiceCollection()
             .AddSingleton(new ConsoleLogger(args.Contains("--verbose") || args.Contains("-vl") ? LogLevel.Trace : LogLevel.Information))
             .AddSingleton<GithubApiService>()

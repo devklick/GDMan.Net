@@ -20,10 +20,13 @@ public static class KnownPaths
     /// </summary>
     public static readonly string GodotLinkPath;
 
+    public static readonly string ConfigFilePath;
+
     static KnownPaths()
     {
         GDManPath = AppDomain.CurrentDomain.BaseDirectory;
         GDManVersionsPath = Path.Join(GDManPath, "versions");
         GodotLinkPath = Path.Combine(GDManPath, "godot");
+        ConfigFilePath = Path.Combine(GDManPath, ".gdmanconfig");
     }
 }
