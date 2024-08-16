@@ -90,11 +90,13 @@ public class UpdateCheckerService(GDManRepoService gdmanRepoService, ConsoleLogg
 
     private static SemanticVersioning.Version? GetCurrentVersion()
     {
-        var versionString = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
 
-        return string.IsNullOrEmpty(versionString)
-            ? null
-            : SemanticVersioning.Version.Parse(versionString, loose: true);
+        if (version == null) return null;
+
+        var versionString = $"{version.Major}.{version.Minor}.{version.Build}";
+
+        return SemanticVersioning.Version.Parse(versionString);
     }
 
     private static string[] GetUpdateInstructions()
