@@ -10,6 +10,11 @@
 <br/>
 <br/>
 
+> [!IMPORTANT]  
+> This is the legacy version of GDMan written in .Net. It will no longer be maintained. 
+> The alternative can be found at https://github.com/devklick/gdman.
+
+
 ## Motivation
 
 While working with Godot on Linux, I find it a chore having to download new versions,
@@ -29,7 +34,7 @@ one of the install scripts. The same process can be used for updating to the lat
 
 You can manually install GDMan in a few steps:
 
-- Download the [latest release](https://github.com/devklick/GDMan/releases/latest)
+- Download the [latest release](https://github.com/devklick/GDMan.Net/releases/latest)
   for your operating system
 - Extract it to a folder of your choice, e.g. `~/gdman`
 - Update your path, adding your new folder to it. In the above example,
@@ -47,7 +52,7 @@ Rather than running through the steps manually, you can run the
 Run the following in a Admin PowerShell prompt:
 
 ```ps1
-. {iwr -useb https://raw.githubusercontent.com/devklick/GDMan/master/install/install-windows.ps1} | iex;
+. {iwr -useb https://raw.githubusercontent.com/devklick/GDMan.Net/master/install/install-windows.ps1} | iex;
 ```
 
 </details>
@@ -58,7 +63,7 @@ Run the following in a Admin PowerShell prompt:
 You can run the following to use the [install script for Linux](/install/install-unix.sh):
 
 ```
-wget -q https://raw.githubusercontent.com/devklick/GDMan/master/install/install-unix.sh -O - | bash -s linux
+wget -q https://raw.githubusercontent.com/devklick/GDMan.Net/master/install/install-unix.sh -O - | bash -s linux
 ```
 
 The script will require the following tools to be available on the machine:
@@ -77,7 +82,7 @@ There's no bespoke script for installing on MacOS, however if you have the right
 available on your Mac, you can probably use the Linux install script and pass in `osx` as an argument:
 
 ```
-wget -q https://raw.githubusercontent.com/devklick/GDMan/master/install/install-unix.sh -O - | bash -s osx
+wget -q https://raw.githubusercontent.com/devklick/GDMan.Net/master/install/install-unix.sh -O - | bash -s osx
 ```
 
 The script will require the following tools to be available on the machine:

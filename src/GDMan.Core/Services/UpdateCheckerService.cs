@@ -105,7 +105,7 @@ public class UpdateCheckerService(GDManRepoService gdmanRepoService, ConsoleLogg
         {
             return [
                 "Run the following in PowerShell to update:",
-                ". {iwr -useb https://raw.githubusercontent.com/devklick/GDMan/master/install/install-windows.ps1} | iex;"
+                ". {iwr -useb https://raw.githubusercontent.com/devklick/GDMan.Net/master/install/install-windows.ps1} | iex;"
             ];
         }
         if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
@@ -113,7 +113,7 @@ public class UpdateCheckerService(GDManRepoService gdmanRepoService, ConsoleLogg
             var os = OperatingSystem.IsLinux() ? "linux" : "osx";
             return [
                 "Run the following to update:",
-                $"wget -q https://raw.githubusercontent.com/devklick/GDMan/master/install/install-unix.sh -O - | bash -s {os}"
+                $"wget -q https://raw.githubusercontent.com/devklick/GDMan.Net/master/install/install-unix.sh -O - | bash -s {os}"
             ];
         }
         return [

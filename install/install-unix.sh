@@ -6,7 +6,7 @@ d="$HOME/gdman"
 
 # Find the latest release for the target OS
 echo Finding latest version
-r=$(curl -s https://api.github.com/repos/devklick/GDMan/releases/latest)
+r=$(curl -s https://api.github.com/repos/devklick/GDMan.Net/releases/latest)
 u=$(echo "$r" | jq -r --arg t "$t" '.assets[] | select(.name | test($t)) | .browser_download_url')
 v=$(echo "$r" | jq -r '.tag_name')
 echo Found $v;

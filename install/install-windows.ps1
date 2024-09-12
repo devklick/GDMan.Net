@@ -2,7 +2,7 @@ $z = Join-Path -Path $env:USERPROFILE -ChildPath "Downloads\gdman.zip"
 $d = Join-Path -Path $env:USERPROFILE -ChildPath "gdman"
 
 Write-Host Finding latest version
-$r = (iwr -useb https://api.github.com/repos/devklick/GDMan/releases/latest | ConvertFrom-Json)
+$r = (iwr -useb https://api.github.com/repos/devklick/GDMan.Net/releases/latest | ConvertFrom-Json)
 $a = $r.assets | Where-Object { $_.name -match 'win-x64.zip' }
 $u = $a | Select-Object -ExpandProperty browser_download_url
 $v = $r.tag_name
